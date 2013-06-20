@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TFViewController : UIViewController<UITableViewDataSource, UITableViewDelegate>
+@class TFFeedDataSource;
+@interface TFViewController : UIViewController<UITableViewDelegate>
 
+@property (strong, nonatomic) TFFeedDataSource *tableViewDataSource;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @end

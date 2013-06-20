@@ -9,6 +9,7 @@
 #import "TFAppDelegate.h"
 #import "TFMenuViewController.h"
 #import "TFViewController.h"
+#import "TFFeedDataSource.h"
 
 @implementation TFAppDelegate
 
@@ -16,19 +17,23 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
-    
     self.viewController  = [[TFViewController alloc] initWithNibName:@"TFViewController" bundle:nil];
-    UINavigationController *tweetsControllers = [[UINavigationController alloc] initWithRootViewController:self.viewController];
+    TFFeedDataSource *datasource = [[TFFeedDataSource alloc] init];
+    self.viewController.tableViewDataSource = datasource;
+    
+    UINavigationController *tweetsControllers = [[UINavigationController alloc]
+                                                 initWithRootViewController:self.viewController];
+    
     TFMenuViewController *menu = [[TFMenuViewController alloc] initWithNibName:@"TFMenuViewController" bundle:nil];
     // Override point for customization after application launch.
-    IIViewDeckController* deckController =  [[IIViewDeckController alloc]
+    self.deckController =  [[IIViewDeckController alloc]
                                              initWithCenterViewController:tweetsControllers
                                              leftViewController:menu];
     
-    [deckController setLeftSize:40];
-    [deckController setBounceDurationFactor:0.8];
+    [self.deckController setLeftSize:40];
+    [self.deckController setBounceDurationFactor:0.8];
     
-    self.window.rootViewController = deckController;
+    self.window.rootViewController = self.deckController;
     [self.window makeKeyAndVisible];
     return YES;
 }

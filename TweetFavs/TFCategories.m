@@ -14,6 +14,15 @@ NSString *const TFCategoriesFetched = @"TFCategoriesFetched";
 
 @implementation TFCategories
 
+- (NSMutableArray *)categories
+{
+    if (!_categories) {
+        _categories = [[NSMutableArray alloc] init];
+    }
+    
+    return _categories;
+}
+
 + (TFCategories *) sharedCategories {
     static TFCategories *_sharedClient = nil;
     static dispatch_once_t onceToken;
@@ -24,18 +33,30 @@ NSString *const TFCategoriesFetched = @"TFCategoriesFetched";
     return _sharedClient;
 }
 
+- (void)fetchCategories
+{
+    ACAccount *twitterAccount = [[MLSocialNetworksManager sharedManager] twitterAccount];
+    NSString *twitterId = [twitterAccount valueForKeyPath:@"properties.user_id"];
+    [TFCategory getCategoriesById:twitterId andCompletion:^(NSArray *categories, NSError *error) {
+        [self.categories removeAllObjects];
+        if (!error) {
+            [self.categories addObjectsFromArray:categories];
+            TFCategory *all = [[TFCategory alloc] init];
+            all.name = NSLocalizedString(@"All", nil);
+            all.ID = [NSNumber numberWithInt:-1];
+            [self.categories insertObject:all atIndex:0];
+            
+        }
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:TFCategoriesFetched object:nil];
+    }];
+}
+
 - (id)init
 {
     self = [super init];
     if (self) {
-        ACAccount *twitterAccount = [[MLSocialNetworksManager sharedManager] twitterAccount];
-        NSString *twitterId = [twitterAccount valueForKeyPath:@"properties.user_id"];
-        [TFCategory getCategoriesById:twitterId andCompletion:^(NSArray *categories, NSError *error) {
-            if (!error) {
-                self.categories = [[NSMutableArray alloc] initWithArray:categories];
-                [[NSNotificationCenter defaultCenter] postNotificationName:TFCategoriesFetched object:nil];
-            }
-        }];
+        [self fetchCategories];
     }
     return self;
 }

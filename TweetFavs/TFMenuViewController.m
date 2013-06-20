@@ -9,6 +9,12 @@
 #import "TFMenuViewController.h"
 #import "MLSocialNetworksManager.h"
 #import "TFCategories.h"
+#import "TFCategory.h"
+#import "TFTweetsAdapter.h"
+#import "TFTweet.h"
+#import "TFAppDelegate.h"
+#import "IIViewDeckController.h"
+#import "TFViewController.h"
 
 @interface TFMenuViewController ()
 
@@ -58,8 +64,9 @@
                 [alert show];
             }
         }else{
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"NewAccount" object:nil userInfo:nil];
             self.accountLabel.text = manager.twitterAccount.username;
+            [TFTweetsAdapter getFavoriteTweets];
+            [[TFCategories sharedCategories] fetchCategories];
         }
     }];
 }
@@ -92,12 +99,30 @@
     }
     
     NSArray *categories = [[TFCategories sharedCategories] categories];
-    NSString *name = categories[indexPath.row][@"category"][@"name"];
-    cell.textLabel.text = name;
+    TFCategory *category = categories[indexPath.row];
+    cell.textLabel.text = category.name;
     
     return cell;
 }
 
-
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSArray *categories = [[TFCategories sharedCategories] categories];
+    TFCategory *category = categories[indexPath.row];
+    
+    TFAppDelegate *appDelegate = (TFAppDelegate*)[UIApplication sharedApplication].delegate;
+    appDelegate.viewController.title = [category.ID intValue] == -1 ? @"TweetFavs" : category.name;
+    
+    if ([category.ID intValue] == -1) {
+        [TFTweetsAdapter getFavoriteTweets];
+        IIViewDeckController *deckController = appDelegate.deckController;
+        [deckController closeLeftViewAnimated:YES];
+    }else{
+        [TFTweetsAdapter getTweetsByCategoryID:category.ID completion:^{
+            IIViewDeckController *deckController = appDelegate.deckController;
+            [deckController closeLeftViewAnimated:YES];
+        }];
+    }
+}
 
 @end

@@ -12,6 +12,8 @@ extern NSString *const TFCategoriesFetched;
 
 @interface TFCategories : NSObject
 
+- (void)fetchCategories;
+
 + (TFCategories *)sharedCategories;
 
 @property (nonatomic, strong) NSMutableArray *categories;

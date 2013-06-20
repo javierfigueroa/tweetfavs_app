@@ -1,45 +1,48 @@
 //
-//  TFCategory.m
+//  TFTweet.m
 //  TweetFavs
 //
 //  Created by Javier Figueroa on 6/20/13.
 //  Copyright (c) 2013 Mainloop LLC. All rights reserved.
 //
 
-#import "TFCategory.h"
+#import "TFTweet.h"
+#import "MLSocialNetworksManager.h"
 #import "TFAPIClient.h"
 
-@implementation TFCategory
+@implementation TFTweet
 
 - (id)initWithAttributes:(NSDictionary*)data
 {
     self = [super init];
     if (self) {
-        NSDictionary *category = data[@"category"];
-        self.userID = category[@"user_id"];
-        self.name = category[@"name"];
+        NSDictionary *category = data[@"tweet"];
+        self.categoryID = category[@"category_id"];
+        self.tweetID = [NSNumber numberWithLongLong:[category[@"tweet_id"] longLongValue]];
         self.ID = category[@"id"];
-        
     }
     return self;
 }
 
-+ (void)getCategoriesById:(NSString*)userId andCompletion:(void(^)(NSArray *categories, NSError *error))completion
++ (void)getTweetsByCategoryId:(NSNumber*)categoryId andCompletion:(void(^)(NSArray *tweets, NSError *error))completion
 {
-    NSString *url = [NSString stringWithFormat:@"categories/%@.json", userId];
+    ACAccount *twitterAccount = [[MLSocialNetworksManager sharedManager] twitterAccount];
+    NSString *twitterId = [twitterAccount valueForKeyPath:@"properties.user_id"];
+    NSString *url = [NSString stringWithFormat:@"tweets/%@/%@.json", twitterId, categoryId];
+    
     [[TFAPIClient sharedClient] getPath:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSArray *JSON = (NSArray*)[NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:nil];
 #if DEBUG
         NSLog(@"%@", JSON);
 #endif
-        NSMutableArray *categories = [[NSMutableArray alloc] initWithCapacity:JSON.count];
+        NSMutableArray *tweets = [[NSMutableArray alloc] initWithCapacity:JSON.count];
         [JSON enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            TFCategory *category = [[TFCategory alloc] initWithAttributes:obj];
-            [categories addObject:category];
+            TFTweet *tweet = [[TFTweet alloc] initWithAttributes:obj];
+            [tweets addObject:tweet];
         }];
         
         if (completion) {
-            completion(categories, nil);
+            completion(tweets, nil);
         }
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -48,5 +51,6 @@
         }
     }];
 }
+
 
 @end

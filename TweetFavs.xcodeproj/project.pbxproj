@@ -43,6 +43,9 @@
 		3BAD9D09177352F600F6FFCA /* TFCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD9D08177352F600F6FFCA /* TFCategory.m */; };
 		3BAD9D0C1773532800F6FFCA /* TFAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD9D0B1773532800F6FFCA /* TFAPIClient.m */; };
 		3BAD9D0F177355D300F6FFCA /* TFCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD9D0E177355D300F6FFCA /* TFCategories.m */; };
+		3BAD9D2D1773993600F6FFCA /* TFFeedDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD9D2C1773993600F6FFCA /* TFFeedDataSource.m */; };
+		3BAD9D3017739AF400F6FFCA /* TFTweetsAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD9D2F17739AF200F6FFCA /* TFTweetsAdapter.m */; };
+		3BAD9D331773A06C00F6FFCA /* TFTweet.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD9D321773A06C00F6FFCA /* TFTweet.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -97,6 +100,12 @@
 		3BAD9D0B1773532800F6FFCA /* TFAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFAPIClient.m; sourceTree = "<group>"; };
 		3BAD9D0D177355D300F6FFCA /* TFCategories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFCategories.h; sourceTree = "<group>"; };
 		3BAD9D0E177355D300F6FFCA /* TFCategories.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFCategories.m; sourceTree = "<group>"; };
+		3BAD9D2B1773993600F6FFCA /* TFFeedDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFFeedDataSource.h; sourceTree = "<group>"; };
+		3BAD9D2C1773993600F6FFCA /* TFFeedDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFFeedDataSource.m; sourceTree = "<group>"; };
+		3BAD9D2E17739AF200F6FFCA /* TFTweetsAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFTweetsAdapter.h; sourceTree = "<group>"; };
+		3BAD9D2F17739AF200F6FFCA /* TFTweetsAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFTweetsAdapter.m; sourceTree = "<group>"; };
+		3BAD9D311773A06C00F6FFCA /* TFTweet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFTweet.h; sourceTree = "<group>"; };
+		3BAD9D321773A06C00F6FFCA /* TFTweet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFTweet.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,6 +182,8 @@
 		3BAD9CAF1772B2B200F6FFCA /* TweetFavs */ = {
 			isa = PBXGroup;
 			children = (
+				3BAD9CB01772B2B200F6FFCA /* Supporting Files */,
+				3BAD9D2A1773991200F6FFCA /* DataSources */,
 				3BAD9D06177352DE00F6FFCA /* Models */,
 				3BAD9CFE1773499200F6FFCA /* Images */,
 				3BAD9CF31773473C00F6FFCA /* Libraries */,
@@ -184,10 +195,11 @@
 				3BAD9CC11772B2B200F6FFCA /* TFViewController.h */,
 				3BAD9CC21772B2B200F6FFCA /* TFViewController.m */,
 				3BAD9CC41772B2B200F6FFCA /* TFViewController.xib */,
-				3BAD9CB01772B2B200F6FFCA /* Supporting Files */,
 				3BAD9D0417734F4700F6FFCA /* TFMenuViewController.xib */,
 				3BAD9D0D177355D300F6FFCA /* TFCategories.h */,
 				3BAD9D0E177355D300F6FFCA /* TFCategories.m */,
+				3BAD9D2E17739AF200F6FFCA /* TFTweetsAdapter.h */,
+				3BAD9D2F17739AF200F6FFCA /* TFTweetsAdapter.m */,
 			);
 			path = TweetFavs;
 			sourceTree = "<group>";
@@ -252,8 +264,19 @@
 				3BAD9D08177352F600F6FFCA /* TFCategory.m */,
 				3BAD9D0A1773532800F6FFCA /* TFAPIClient.h */,
 				3BAD9D0B1773532800F6FFCA /* TFAPIClient.m */,
+				3BAD9D311773A06C00F6FFCA /* TFTweet.h */,
+				3BAD9D321773A06C00F6FFCA /* TFTweet.m */,
 			);
 			name = Models;
+			sourceTree = "<group>";
+		};
+		3BAD9D2A1773991200F6FFCA /* DataSources */ = {
+			isa = PBXGroup;
+			children = (
+				3BAD9D2B1773993600F6FFCA /* TFFeedDataSource.h */,
+				3BAD9D2C1773993600F6FFCA /* TFFeedDataSource.m */,
+			);
+			name = DataSources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -337,6 +360,9 @@
 				3BAD9D09177352F600F6FFCA /* TFCategory.m in Sources */,
 				3BAD9D0C1773532800F6FFCA /* TFAPIClient.m in Sources */,
 				3BAD9D0F177355D300F6FFCA /* TFCategories.m in Sources */,
+				3BAD9D2D1773993600F6FFCA /* TFFeedDataSource.m in Sources */,
+				3BAD9D3017739AF400F6FFCA /* TFTweetsAdapter.m in Sources */,
+				3BAD9D331773A06C00F6FFCA /* TFTweet.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
