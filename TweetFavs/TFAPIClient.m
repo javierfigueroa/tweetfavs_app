@@ -9,7 +9,8 @@
 #import "TFAPIClient.h"
 #import "AFJSONRequestOperation.h"
 
-static NSString * const kAPIBaseURLString = @"http://0.0.0.0:3000/";//@"http://tweetfavs.heroku.com/";
+static NSString * const kAPIBaseURLString = @"http://0.0.0.0:3000/";
+//@"http://tweetfavs.heroku.com/";
 
 @implementation TFAPIClient
 

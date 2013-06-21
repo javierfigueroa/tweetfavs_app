@@ -12,7 +12,17 @@
 
 @property (nonatomic, strong) NSNumber *ID;
 @property (nonatomic, strong) NSString *categoryID;
+@property (nonatomic, strong) NSString *status;
+@property (nonatomic, strong) NSString *username;
+@property (nonatomic, strong) NSURL *avatarURL;
+@property (nonatomic, strong) NSDate *created;
 @property (nonatomic, strong) NSNumber *tweetID;
+@property (nonatomic, strong) NSNumber *retweetCount;
+@property (nonatomic, strong) NSMutableArray *categories;
+
+- (id)initWithAttributes:(NSDictionary*)data;
+
+- (void)updateWithAttributes:(NSDictionary*)data;
 
 + (void)getTweetsByCategoryId:(NSNumber*)categoryId andCompletion:(void(^)(NSArray *tweets, NSError *error))completion;
 

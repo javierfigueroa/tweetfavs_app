@@ -10,6 +10,6 @@
 
 @interface TFFeedDataSource : NSObject<UITableViewDataSource>
 
-@property (nonatomic, retain) NSMutableArray *tweets;
+@property (nonatomic, strong) NSMutableArray *tweets;
 
 @end

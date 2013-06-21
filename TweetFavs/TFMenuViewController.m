@@ -15,6 +15,7 @@
 #import "TFAppDelegate.h"
 #import "IIViewDeckController.h"
 #import "TFViewController.h"
+#import "TFCategoryCell.h"
 
 @interface TFMenuViewController ()
 
@@ -41,6 +42,7 @@
     self.accountLabel.shadowOffset = CGSizeMake(0.0, 0.0);
     self.tableView.backgroundColor = [UIColor whiteColor];
     self.tableView.separatorColor = [UIColor colorWithWhite:0.9 alpha:0.6];
+    [self.tableView registerNib:[UINib nibWithNibName:@"TFCategoryCell" bundle:nil] forCellReuseIdentifier:@"TFCategoryCell"];
     
     MLSocialNetworksManager *manager = [MLSocialNetworksManager sharedManager];
     self.accountButton.backgroundColor = [UIColor colorWithRed:50.0/255 green:102.0/255 blue:147.0/255 alpha:1.0f];
@@ -65,14 +67,14 @@
             }
         }else{
             self.accountLabel.text = manager.twitterAccount.username;
-            [TFTweetsAdapter getFavoriteTweets];
-            [[TFCategories sharedCategories] fetchCategories];
+            [TFTweetsAdapter getCategories];
         }
     }];
 }
 
 - (void)refresh
 {
+    [TFTweetsAdapter getFavoriteTweets];
     [self.tableView reloadData];
 }
 
@@ -86,29 +88,28 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[[TFCategories sharedCategories] categories] count];
+    return [[TFCategories sharedCategories] categories].allKeys.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellID = @"CategoryCell";
+    static NSString *CellID = @"TFCategoryCell";
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellID];
-    if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellID];
-    }
+    TFCategoryCell *cell = [tableView dequeueReusableCellWithIdentifier:CellID];
     
-    NSArray *categories = [[TFCategories sharedCategories] categories];
-    TFCategory *category = categories[indexPath.row];
+    NSMutableDictionary *categories = [[TFCategories sharedCategories] categories];
+    TFCategory *category = categories[categories.allKeys[indexPath.row]];
     cell.textLabel.text = category.name;
+    cell.detailTextLabel.text = [category.ID intValue] == -1 ? NSLocalizedString(@"All of your favorite tweets", nil) : [NSString stringWithFormat:@"%i tweets", category.tweets.count];
     
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSArray *categories = [[TFCategories sharedCategories] categories];
-    TFCategory *category = categories[indexPath.row];
+    NSMutableDictionary *categories = [[TFCategories sharedCategories] categories];
+    NSNumber *key = categories.allKeys[indexPath.row];
+    TFCategory *category = categories[key];
     
     TFAppDelegate *appDelegate = (TFAppDelegate*)[UIApplication sharedApplication].delegate;
     appDelegate.viewController.title = [category.ID intValue] == -1 ? @"TweetFavs" : category.name;
@@ -118,10 +119,9 @@
         IIViewDeckController *deckController = appDelegate.deckController;
         [deckController closeLeftViewAnimated:YES];
     }else{
-        [TFTweetsAdapter getTweetsByCategoryID:category.ID completion:^{
-            IIViewDeckController *deckController = appDelegate.deckController;
-            [deckController closeLeftViewAnimated:YES];
-        }];
+        [TFTweetsAdapter setTweets:category.tweets];
+        IIViewDeckController *deckController = appDelegate.deckController;
+        [deckController closeLeftViewAnimated:YES];
     }
 }
 

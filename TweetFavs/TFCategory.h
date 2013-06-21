@@ -13,9 +13,11 @@
 @property (nonatomic, strong) NSNumber *ID;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSNumber *userID;
+@property (nonatomic, strong) NSMutableArray *tweets;
 
 - (id)initWithAttributes:(NSDictionary*)data;
 
 + (void)getCategoriesById:(NSString*)userId andCompletion:(void(^)(NSArray *categories, NSError *error))completion;
 
++ (void)getCategoriesByTweetId:(NSNumber*)tweetID andCompletion:(void(^)(NSArray *categories, NSError *error))completion;
 @end

@@ -8,16 +8,17 @@
 
 #import "TFCategories.h"
 #import "TFCategory.h"
+#import "TFTweetsAdapter.h"
 #import "MLSocialNetworksManager.h"
 
 NSString *const TFCategoriesFetched = @"TFCategoriesFetched";
 
 @implementation TFCategories
 
-- (NSMutableArray *)categories
+- (NSMutableDictionary *)categories
 {
     if (!_categories) {
-        _categories = [[NSMutableArray alloc] init];
+        _categories = [[NSMutableDictionary alloc] init];
     }
     
     return _categories;
@@ -33,30 +34,12 @@ NSString *const TFCategoriesFetched = @"TFCategoriesFetched";
     return _sharedClient;
 }
 
-- (void)fetchCategories
-{
-    ACAccount *twitterAccount = [[MLSocialNetworksManager sharedManager] twitterAccount];
-    NSString *twitterId = [twitterAccount valueForKeyPath:@"properties.user_id"];
-    [TFCategory getCategoriesById:twitterId andCompletion:^(NSArray *categories, NSError *error) {
-        [self.categories removeAllObjects];
-        if (!error) {
-            [self.categories addObjectsFromArray:categories];
-            TFCategory *all = [[TFCategory alloc] init];
-            all.name = NSLocalizedString(@"All", nil);
-            all.ID = [NSNumber numberWithInt:-1];
-            [self.categories insertObject:all atIndex:0];
-            
-        }
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:TFCategoriesFetched object:nil];
-    }];
-}
 
 - (id)init
 {
     self = [super init];
     if (self) {
-        [self fetchCategories];
+        
     }
     return self;
 }

@@ -46,6 +46,12 @@
 		3BAD9D2D1773993600F6FFCA /* TFFeedDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD9D2C1773993600F6FFCA /* TFFeedDataSource.m */; };
 		3BAD9D3017739AF400F6FFCA /* TFTweetsAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD9D2F17739AF200F6FFCA /* TFTweetsAdapter.m */; };
 		3BAD9D331773A06C00F6FFCA /* TFTweet.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD9D321773A06C00F6FFCA /* TFTweet.m */; };
+		3BAD9D361773CC7100F6FFCA /* TFCategoryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD9D351773CC7100F6FFCA /* TFCategoryCell.m */; };
+		3BAD9D381773CC8200F6FFCA /* TFCategoryCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BAD9D371773CC8100F6FFCA /* TFCategoryCell.xib */; };
+		3BE388FA1774F48E0051FF39 /* star-64.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BE388F91774F48E0051FF39 /* star-64.png */; };
+		3BE388FC1774F4970051FF39 /* outline_star-64.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BE388FB1774F4970051FF39 /* outline_star-64.png */; };
+		3BE388FE1774F50F0051FF39 /* add_file-64.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BE388FD1774F50F0051FF39 /* add_file-64.png */; };
+		3BE389001774F62A0051FF39 /* list-64.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BE388FF1774F62A0051FF39 /* list-64.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -106,6 +112,13 @@
 		3BAD9D2F17739AF200F6FFCA /* TFTweetsAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFTweetsAdapter.m; sourceTree = "<group>"; };
 		3BAD9D311773A06C00F6FFCA /* TFTweet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFTweet.h; sourceTree = "<group>"; };
 		3BAD9D321773A06C00F6FFCA /* TFTweet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFTweet.m; sourceTree = "<group>"; };
+		3BAD9D341773CC7100F6FFCA /* TFCategoryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFCategoryCell.h; sourceTree = "<group>"; };
+		3BAD9D351773CC7100F6FFCA /* TFCategoryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFCategoryCell.m; sourceTree = "<group>"; };
+		3BAD9D371773CC8100F6FFCA /* TFCategoryCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TFCategoryCell.xib; sourceTree = "<group>"; };
+		3BE388F91774F48E0051FF39 /* star-64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "star-64.png"; sourceTree = "<group>"; };
+		3BE388FB1774F4970051FF39 /* outline_star-64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "outline_star-64.png"; sourceTree = "<group>"; };
+		3BE388FD1774F50F0051FF39 /* add_file-64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "add_file-64.png"; sourceTree = "<group>"; };
+		3BE388FF1774F62A0051FF39 /* list-64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-64.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -224,6 +237,9 @@
 				3BAD9CDD17733E7B00F6FFCA /* TFFeedCell.h */,
 				3BAD9CDE17733E7B00F6FFCA /* TFFeedCell.m */,
 				3BAD9CE017733F1C00F6FFCA /* TFFeedCell.xib */,
+				3BAD9D341773CC7100F6FFCA /* TFCategoryCell.h */,
+				3BAD9D351773CC7100F6FFCA /* TFCategoryCell.m */,
+				3BAD9D371773CC8100F6FFCA /* TFCategoryCell.xib */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -252,6 +268,10 @@
 		3BAD9CFE1773499200F6FFCA /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				3BE388FF1774F62A0051FF39 /* list-64.png */,
+				3BE388FD1774F50F0051FF39 /* add_file-64.png */,
+				3BE388FB1774F4970051FF39 /* outline_star-64.png */,
+				3BE388F91774F48E0051FF39 /* star-64.png */,
 				3BAD9CFF1773499F00F6FFCA /* menu@2x.png */,
 			);
 			path = Images;
@@ -339,6 +359,11 @@
 				3BAD9CE117733F1C00F6FFCA /* TFFeedCell.xib in Resources */,
 				3BAD9D001773499F00F6FFCA /* menu@2x.png in Resources */,
 				3BAD9D0517734F4700F6FFCA /* TFMenuViewController.xib in Resources */,
+				3BAD9D381773CC8200F6FFCA /* TFCategoryCell.xib in Resources */,
+				3BE388FA1774F48E0051FF39 /* star-64.png in Resources */,
+				3BE388FC1774F4970051FF39 /* outline_star-64.png in Resources */,
+				3BE388FE1774F50F0051FF39 /* add_file-64.png in Resources */,
+				3BE389001774F62A0051FF39 /* list-64.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -363,6 +388,7 @@
 				3BAD9D2D1773993600F6FFCA /* TFFeedDataSource.m in Sources */,
 				3BAD9D3017739AF400F6FFCA /* TFTweetsAdapter.m in Sources */,
 				3BAD9D331773A06C00F6FFCA /* TFTweet.m in Sources */,
+				3BAD9D361773CC7100F6FFCA /* TFCategoryCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -507,6 +533,7 @@
 				3BAD9CCB1772B2B200F6FFCA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

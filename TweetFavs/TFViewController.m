@@ -41,8 +41,8 @@
 - (void)firstTimeAccountCheck
 {
     MLSocialNetworksManager *manager = [MLSocialNetworksManager sharedManager];
-    if (manager.twitterAccount) {
-        [TFTweetsAdapter getFavoriteTweets];
+    if (manager.twitterAccount ) {
+        [TFTweetsAdapter getCategories];
     }else{
         [manager getTwitterAccounts:^(NSObject *response, NSError *error) {
             if (error) {
@@ -51,7 +51,7 @@
                     [alert show];
                 }
             }else{
-                [TFTweetsAdapter getFavoriteTweets];
+                [TFTweetsAdapter getCategories];
             }
         }];
     }
@@ -89,8 +89,8 @@
     self.navigationItem.rightBarButtonItem = searchItem;
     
     
-    UIImageView* menuView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"menu.png"]];
-    menuView.frame = CGRectMake(0, 0, 28, 20);
+    UIImageView* menuView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"list-64"]];
+    menuView.frame = CGRectMake(0, 0, 32, 32);
     
     UIBarButtonItem* menuItem = [[UIBarButtonItem alloc] initWithCustomView:menuView];
     

@@ -9,19 +9,58 @@
 #import "TFTweet.h"
 #import "MLSocialNetworksManager.h"
 #import "TFAPIClient.h"
+#import "TFCategory.h"
 
 @implementation TFTweet
+
+- (NSMutableArray *)categories
+{
+    if (!_categories) {
+        _categories = [[NSMutableArray alloc] init];
+    }
+    
+    return _categories;
+}
 
 - (id)initWithAttributes:(NSDictionary*)data
 {
     self = [super init];
     if (self) {
-        NSDictionary *category = data[@"tweet"];
-        self.categoryID = category[@"category_id"];
-        self.tweetID = [NSNumber numberWithLongLong:[category[@"tweet_id"] longLongValue]];
-        self.ID = category[@"id"];
+        [self updateWithAttributes:data];
     }
     return self;
+}
+
+- (void)updateWithAttributes:(NSDictionary*)data
+{
+    
+    NSDictionary *tweet = data[@"tweet"] ? data[@"tweet"] : data;
+    
+    if (tweet[@"tweet_id"]) {
+        self.ID = tweet[@"id"];
+    }
+    
+    self.categoryID = tweet[@"category_id"];
+    
+    self.tweetID = tweet[@"tweet_id"] ?
+    [NSNumber numberWithLongLong:[tweet[@"tweet_id"] longLongValue]] :
+    [NSNumber numberWithLongLong:[tweet[@"id"] longLongValue]];
+    
+    self.username = tweet[@"user"][@"name"];
+    self.status = tweet[@"text"];
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.dateFormat = @"eee MMM dd HH:mm:ss ZZZZ yyyy";
+    self.created = [formatter dateFromString:tweet[@"created_at"]];
+    
+    self.retweetCount = [NSNumber numberWithInt:[tweet[@"retweet_count"] intValue]];
+    self.avatarURL = [NSURL URLWithString:tweet[@"user"][@"profile_image_url"]];
+    
+    NSArray *categories = data[@"categories"];
+    [categories enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        TFCategory *category = [[TFCategory alloc] initWithAttributes:obj];
+        [self.categories addObject:category];
+    }];
 }
 
 + (void)getTweetsByCategoryId:(NSNumber*)categoryId andCompletion:(void(^)(NSArray *tweets, NSError *error))completion
