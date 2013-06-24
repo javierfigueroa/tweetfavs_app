@@ -9,6 +9,7 @@
 #import "TFCategory.h"
 #import "TFAPIClient.h"
 #import "TFTweet.h"
+#import "MLSocialNetworksManager.h"
 
 @implementation TFCategory
 
@@ -37,6 +38,55 @@
         }];
     }
     return self;
+}
+
++ (void)addCategoryWithName:(NSString*)name completion:(void(^)(TFCategory *category, NSError *error))completion
+{
+    ACAccount *twitterAccount = [[MLSocialNetworksManager sharedManager] twitterAccount];
+    NSString *userId = [twitterAccount valueForKeyPath:@"properties.user_id"];
+    
+    NSDictionary *parameters = @{@"twitter_id":userId, @"name": name};
+    [[TFAPIClient sharedClient] postPath:@"categories.json" parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:nil];
+#if DEBUG
+        NSLog(@"%@", JSON);
+#endif
+        TFCategory *category = [[TFCategory alloc] initWithAttributes:JSON];
+        if (completion) {
+            completion(category, nil);
+        }
+
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        if (completion) {
+            completion(nil, error);
+        }
+    }];
+}
+
++ (void)updateCategory:(TFCategory*)category completion:(void(^)(TFCategory *category, NSError *error))completion
+
+{
+    ACAccount *twitterAccount = [[MLSocialNetworksManager sharedManager] twitterAccount];
+    NSString *userId = [twitterAccount valueForKeyPath:@"properties.user_id"];
+    
+    NSDictionary *parameters = @{@"twitter_id":userId, @"name": category.name};
+    NSString *url = [NSString stringWithFormat:@"categories/%@.json", category.ID];
+    
+    [[TFAPIClient sharedClient] putPath:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:nil];
+#if DEBUG
+        NSLog(@"%@", JSON);
+#endif
+        TFCategory *category = [[TFCategory alloc] initWithAttributes:JSON];
+        if (completion) {
+            completion(category, nil);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        if (completion) {
+            completion(nil, error);
+        }
+    }];
 }
 
 + (void)getCategoriesById:(NSString*)userId andCompletion:(void(^)(NSArray *categories, NSError *error))completion
@@ -80,6 +130,29 @@
         
         if (completion) {
             completion(categories, nil);
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        if (completion) {
+            completion(nil, error);
+        }
+    }];
+}
+
++ (void)deleteCategory:(TFCategory*)category completion:(void(^)(NSArray *categories, NSError *error))completion
+
+{
+    ACAccount *twitterAccount = [[MLSocialNetworksManager sharedManager] twitterAccount];
+    NSString *userId = [twitterAccount valueForKeyPath:@"properties.user_id"];
+    
+    NSString *url = [NSString stringWithFormat:@"categories/%@/%@.json", userId, category.ID];
+    [[TFAPIClient sharedClient] deletePath:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:nil];
+#if DEBUG
+        NSLog(@"%@", JSON);
+#endif
+        if (completion) {
+            completion(nil, nil);
         }
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

@@ -52,6 +52,8 @@
 		3BE388FC1774F4970051FF39 /* outline_star-64.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BE388FB1774F4970051FF39 /* outline_star-64.png */; };
 		3BE388FE1774F50F0051FF39 /* add_file-64.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BE388FD1774F50F0051FF39 /* add_file-64.png */; };
 		3BE389001774F62A0051FF39 /* list-64.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BE388FF1774F62A0051FF39 /* list-64.png */; };
+		3BE389041777BC700051FF39 /* TFEditCategoryCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BE389031777BC700051FF39 /* TFEditCategoryCell.xib */; };
+		3BE389071777BC840051FF39 /* TFEditCategoryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BE389061777BC840051FF39 /* TFEditCategoryCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -119,6 +121,9 @@
 		3BE388FB1774F4970051FF39 /* outline_star-64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "outline_star-64.png"; sourceTree = "<group>"; };
 		3BE388FD1774F50F0051FF39 /* add_file-64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "add_file-64.png"; sourceTree = "<group>"; };
 		3BE388FF1774F62A0051FF39 /* list-64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-64.png"; sourceTree = "<group>"; };
+		3BE389031777BC700051FF39 /* TFEditCategoryCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TFEditCategoryCell.xib; sourceTree = "<group>"; };
+		3BE389051777BC840051FF39 /* TFEditCategoryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFEditCategoryCell.h; sourceTree = "<group>"; };
+		3BE389061777BC840051FF39 /* TFEditCategoryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFEditCategoryCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -205,10 +210,10 @@
 				3BAD9CB91772B2B200F6FFCA /* TFAppDelegate.m */,
 				3BAD9D0117734D3600F6FFCA /* TFMenuViewController.h */,
 				3BAD9D0217734D3600F6FFCA /* TFMenuViewController.m */,
+				3BAD9D0417734F4700F6FFCA /* TFMenuViewController.xib */,
 				3BAD9CC11772B2B200F6FFCA /* TFViewController.h */,
 				3BAD9CC21772B2B200F6FFCA /* TFViewController.m */,
 				3BAD9CC41772B2B200F6FFCA /* TFViewController.xib */,
-				3BAD9D0417734F4700F6FFCA /* TFMenuViewController.xib */,
 				3BAD9D0D177355D300F6FFCA /* TFCategories.h */,
 				3BAD9D0E177355D300F6FFCA /* TFCategories.m */,
 				3BAD9D2E17739AF200F6FFCA /* TFTweetsAdapter.h */,
@@ -240,6 +245,9 @@
 				3BAD9D341773CC7100F6FFCA /* TFCategoryCell.h */,
 				3BAD9D351773CC7100F6FFCA /* TFCategoryCell.m */,
 				3BAD9D371773CC8100F6FFCA /* TFCategoryCell.xib */,
+				3BE389051777BC840051FF39 /* TFEditCategoryCell.h */,
+				3BE389061777BC840051FF39 /* TFEditCategoryCell.m */,
+				3BE389031777BC700051FF39 /* TFEditCategoryCell.xib */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -364,6 +372,7 @@
 				3BE388FC1774F4970051FF39 /* outline_star-64.png in Resources */,
 				3BE388FE1774F50F0051FF39 /* add_file-64.png in Resources */,
 				3BE389001774F62A0051FF39 /* list-64.png in Resources */,
+				3BE389041777BC700051FF39 /* TFEditCategoryCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -389,6 +398,7 @@
 				3BAD9D3017739AF400F6FFCA /* TFTweetsAdapter.m in Sources */,
 				3BAD9D331773A06C00F6FFCA /* TFTweet.m in Sources */,
 				3BAD9D361773CC7100F6FFCA /* TFCategoryCell.m in Sources */,
+				3BE389071777BC840051FF39 /* TFEditCategoryCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

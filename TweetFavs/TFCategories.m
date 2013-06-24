@@ -39,8 +39,10 @@ NSString *const TFCategoriesFetched = @"TFCategoriesFetched";
 {
     self = [super init];
     if (self) {
-        
-    }
+        TFCategory *all = [[TFCategory alloc] init];
+        all.name = NSLocalizedString(@"All", nil);
+        all.ID = [NSNumber numberWithInt:-1];
+        self.categories[all.ID] = all;    }
     return self;
 }
 
