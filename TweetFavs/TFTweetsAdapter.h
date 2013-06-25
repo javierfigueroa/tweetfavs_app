@@ -8,12 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
-@class ACAccount;
+@class ACAccount, TFTweet, TFCategory;
 @interface TFTweetsAdapter : NSObject
 
 + (void)getCategories;
 
 + (void)getFavoriteTweets;
+
++ (void)getFavoriteTweetsSinceID:(NSNumber*)ID;
 
 + (void)getTweetsByCategoryID:(NSNumber *)categoryID completion:(void(^)(void))completion;
 
@@ -22,4 +24,6 @@
 + (void)getCategoriesByTweetID:(NSNumber *)tweetID completion:(void(^)(NSArray *categories))completion;
 
 + (void)setTweets:(NSArray *)tweets;
+
++ (TFTweet *)findTweetById:(NSNumber *)ID inCategory:(TFCategory *)category;
 @end

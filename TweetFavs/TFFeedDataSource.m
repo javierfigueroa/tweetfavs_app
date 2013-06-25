@@ -26,6 +26,11 @@
     return _tweets;
 }
 
+- (void)getFavoriteTweetsSinceID:(NSNumber*)tweetID
+{
+    [TFTweetsAdapter getFavoriteTweetsSinceID:tweetID];
+}
+
 #pragma mark - TableView Data Source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -54,7 +59,7 @@
     
     TFTweet *tweet = self.tweets[indexPath.row];
     
-//    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_main_queue(), ^{
         if (tweet.status.length == 0) {
             [TFTweetsAdapter getTweetByID:tweet.tweetID completion:^(NSMutableDictionary *atweet) {
                 [tweet updateWithAttributes:atweet];
@@ -62,15 +67,15 @@
             }];
         }
         
-        if (tweet.categories.count == 0) {
+//        if (tweet.categories.count == 0) {
             [TFTweetsAdapter getCategoriesByTweetID:tweet.tweetID completion:^(NSArray *categories) {
                 tweet.categories = [NSMutableArray arrayWithArray:categories];
                 [self configureTweetCell:tweet cell:cell];
             }];
-        }
+//        }
     
         [self configureTweetCell:tweet cell:cell];
-//    });
+    });
     
     return cell;
 }

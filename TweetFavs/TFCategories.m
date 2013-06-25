@@ -12,6 +12,7 @@
 #import "MLSocialNetworksManager.h"
 
 NSString *const TFCategoriesFetched = @"TFCategoriesFetched";
+NSString *const TFCategoriesEdited = @"TFCategoriesEdited";
 
 @implementation TFCategories
 
@@ -19,6 +20,15 @@ NSString *const TFCategoriesFetched = @"TFCategoriesFetched";
 {
     if (!_categories) {
         _categories = [[NSMutableDictionary alloc] init];
+    }
+    
+    NSNumber *allKey = [NSNumber numberWithInt:-1];
+    TFCategory *category = _categories[allKey];
+    if (!category) {
+        category = [[TFCategory alloc] init];
+        category.ID = allKey;
+        category.name = NSLocalizedString(@"All", nil);
+        _categories[allKey] = category;
     }
     
     return _categories;
@@ -39,10 +49,7 @@ NSString *const TFCategoriesFetched = @"TFCategoriesFetched";
 {
     self = [super init];
     if (self) {
-        TFCategory *all = [[TFCategory alloc] init];
-        all.name = NSLocalizedString(@"All", nil);
-        all.ID = [NSNumber numberWithInt:-1];
-        self.categories[all.ID] = all;    }
+    }
     return self;
 }
 

@@ -57,19 +57,20 @@
 
 + (void)getFavoriteTweets
 {
-    [[self class] getFavoriteTweetsWithPage:0];
+    [[self class] getFavoriteTweetsSinceID:nil];
 }
 
-+ (void)getFavoriteTweetsWithPage:(int)page
++ (void)getFavoriteTweetsSinceID:(NSNumber*)ID
 {
     NSMutableDictionary *categories = [[TFCategories sharedCategories] categories];
-    TFCategory *category = categories[[NSNumber numberWithInt:-1]];
+    NSNumber *allKey = [NSNumber numberWithInt:-1];
+    TFCategory *category = categories[allKey];
     
     if (category.tweets.count == 0) {
         MLSocialNetworksManager *manager = [MLSocialNetworksManager sharedManager];
-        [manager getFavoriteTweetsWithPage:page completion:^(NSArray *tweets, NSError *error) {
+        [manager getFavoriteTweetsSinceID:ID completion:^(NSArray *tweets, NSError *error) {
             
-            if (page == 0) {
+            if (!ID) {
                 [[[self class] dataSource].tweets removeAllObjects];
                 [category.tweets removeAllObjects];
             }
@@ -88,9 +89,9 @@
     }
 }
 
-+ (void)setTweets:(NSArray *)tweets
++ (void)setTweets:(NSMutableArray *)tweets
 {
-    [[self class] dataSource].tweets = [NSMutableArray arrayWithArray:tweets];
+    [[self class] dataSource].tweets = tweets;
     [[[self class] tableView] reloadData];
 }
 
@@ -120,6 +121,18 @@
             completion(categories);
         }
     }];
+}
+
+
++ (TFTweet *)findTweetById:(NSNumber *)ID inCategory:(TFCategory *)category
+{
+    for (TFTweet *tweet in category.tweets) {
+        if ([tweet.tweetID isEqualToNumber:ID]) {
+            return tweet;
+        }
+    }
+    
+    return nil;
 }
 
 

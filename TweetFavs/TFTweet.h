@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class TFCategory;
 @interface TFTweet : NSObject
 
 @property (nonatomic, strong) NSNumber *ID;
@@ -24,6 +25,11 @@
 
 - (void)updateWithAttributes:(NSDictionary*)data;
 
+
++ (void)addTweet:(TFTweet*)tweet toCategory:(TFCategory*)category Completion:(void(^)(NSArray *tweets, NSError *error))completion;
+
 + (void)getTweetsByCategoryId:(NSNumber*)categoryId andCompletion:(void(^)(NSArray *tweets, NSError *error))completion;
+
++ (void)deleteTweet:(TFTweet*)tweet fromCategory:(TFCategory*)category Completion:(void(^)(NSArray *tweets, NSError *error))completion;
 
 @end

@@ -8,14 +8,17 @@
 
 #import <UIKit/UIKit.h>
 
+@class TFCategoriesDataSource, JSFlatButton;
 @interface TFMenuViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet UILabel *accountLabel;
-@property (weak, nonatomic) IBOutlet UIButton *accountButton;
+@property (weak, nonatomic) IBOutlet UIView *tableHeader;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (strong, nonatomic) IBOutlet UIView *tableFooter;
 @property (weak, nonatomic) IBOutlet UIView *toolbarView;
-@property (weak, nonatomic) IBOutlet UIButton *bottomLeftButton;
-@property (weak, nonatomic) IBOutlet UIButton *bottomRightButton;
+@property (weak, nonatomic) IBOutlet JSFlatButton *bottomLeftButton;
+@property (weak, nonatomic) IBOutlet JSFlatButton *bottomRightButton;
+
+@property (strong, nonatomic) IBOutlet UIView *tableFooter;
+@property (strong, nonatomic) TFCategoriesDataSource *tableDataSource;
 
 - (IBAction)didPressToolbarRightButton:(id)sender;
 - (IBAction)didPressToolbarLeftButton:(id)sender;

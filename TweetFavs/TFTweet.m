@@ -10,6 +10,7 @@
 #import "MLSocialNetworksManager.h"
 #import "TFAPIClient.h"
 #import "TFCategory.h"
+#import "TFTweetsAdapter.h"
 
 @implementation TFTweet
 
@@ -91,5 +92,60 @@
     }];
 }
 
++ (void)addTweet:(TFTweet*)tweet toCategory:(TFCategory*)category Completion:(void(^)(NSArray *tweets, NSError *error))completion
+{
+    ACAccount *twitterAccount = [[MLSocialNetworksManager sharedManager] twitterAccount];
+    NSString *twitterId = [twitterAccount valueForKeyPath:@"properties.user_id"];
+    
+    NSDictionary *parameters = @{@"twitter_id":twitterId, @"category_id":category.ID, @"tweet_id":tweet.tweetID};
+    
+    [category.tweets addObject:tweet];
+    
+    [[TFAPIClient sharedClient] postPath:@"tweets.json" parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSArray *JSON = (NSArray*)[NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:nil];
+#if DEBUG
+        NSLog(@"%@", JSON);
+#endif
+        
+        if (completion) {
+            completion(nil, nil);
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        if (completion) {
+            [category.tweets removeObject:tweet];
+            completion(nil, error);
+        }
+    }];
+}
+
++ (void)deleteTweet:(TFTweet*)tweet fromCategory:(TFCategory*)category Completion:(void(^)(NSArray *tweets, NSError *error))completion
+{
+    ACAccount *twitterAccount = [[MLSocialNetworksManager sharedManager] twitterAccount];
+    NSString *twitterId = [twitterAccount valueForKeyPath:@"properties.user_id"];
+    
+    TFTweet *tweetToRemove = [TFTweetsAdapter findTweetById:tweet.tweetID inCategory:category];
+    [category.tweets removeObject:tweetToRemove];
+    [category.tweets removeObject:tweet];
+    
+    NSString *url = [NSString stringWithFormat:@"tweets/%@/%@/%@.json", twitterId, category.ID, tweet.tweetID];
+    
+    [[TFAPIClient sharedClient] deletePath:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//        NSArray *JSON = (NSArray*)[NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:nil];
+//#if DEBUG
+//        NSLog(@"%@", JSON);
+//#endif
+        
+        if (completion) {
+            completion(nil, nil);
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        if (completion) {
+            [category.tweets addObject:tweetToRemove];
+            completion(nil, error);
+        }
+    }];
+}
 
 @end

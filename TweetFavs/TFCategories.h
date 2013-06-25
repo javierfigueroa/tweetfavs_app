@@ -9,11 +9,12 @@
 #import <Foundation/Foundation.h>
 
 extern NSString *const TFCategoriesFetched;
+extern NSString *const TFCategoriesEdited;
 
 @interface TFCategories : NSObject
 
 + (TFCategories *)sharedCategories;
 
-@property (nonatomic, strong) NSMutableDictionary *categories; /*cat id, category obj 8*/
+@property (nonatomic, strong) NSMutableDictionary *categories; /*cat id, category obj */
 
 @end

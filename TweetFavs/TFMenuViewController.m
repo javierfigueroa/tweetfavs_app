@@ -17,27 +17,18 @@
 #import "TFViewController.h"
 #import "TFCategoryCell.h"
 #import "TFEditCategoryCell.h"
+#import "TFTheme.h"
+#import "TFCategoriesDataSource.h"
+#import "JSFlatButton.h"
 #define trimString( object ) [object stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet] ]
 
 
 @interface TFMenuViewController ()
 
-@property (nonatomic, strong) NSArray *sortedCategories;
-
 @end
 
 @implementation TFMenuViewController
 
-- (NSArray *)sortedCategories
-{
-    if (!_sortedCategories) {
-        NSMutableDictionary *categories = [[TFCategories sharedCategories] categories];
-        _sortedCategories = [[categories allKeys] sortedArrayUsingSelector: @selector(compare:)];
-
-    }
-    
-    return _sortedCategories;
-}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -51,25 +42,30 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [TFTheme customizeMenuController:self];
     
-    NSString* boldFontName = @"GillSans-Bold";
-    self.accountLabel.textColor =[UIColor whiteColor];
-    self.accountLabel.font =  [UIFont fontWithName:boldFontName size:18.0f];
-    self.accountLabel.shadowOffset = CGSizeMake(0.0, 0.0);
-    self.tableView.backgroundColor = [UIColor whiteColor];
-    self.tableView.separatorColor = [UIColor colorWithWhite:0.9 alpha:0.6];
-    self.tableView.allowsSelectionDuringEditing = YES;
+    
+    [self.bottomLeftButton setFlatImage:[UIImage imageNamed:@"settings"]];
+    [self.bottomRightButton setFlatImage:[UIImage imageNamed:@"account"]];
+    [self.bottomRightButton setTitle:NSLocalizedString(@" Twitter", nil) forState:UIControlStateNormal];
+    [self.bottomLeftButton setTitle:NSLocalizedString(@" Edit", nil) forState:UIControlStateNormal];
     [self.tableView registerNib:[UINib nibWithNibName:@"TFCategoryCell" bundle:nil] forCellReuseIdentifier:@"TFCategoryCell"];
     [self.tableView registerNib:[UINib nibWithNibName:@"TFEditCategoryCell" bundle:nil] forCellReuseIdentifier:@"TFEditCategoryCell"];
     
     MLSocialNetworksManager *manager = [MLSocialNetworksManager sharedManager];
-    UIColor *bgColor = [UIColor colorWithRed:50.0/255 green:102.0/255 blue:147.0/255 alpha:1.0f];
-    ;
-    self.accountButton.backgroundColor = bgColor;
-    self.toolbarView.backgroundColor = bgColor;
     self.accountLabel.text = manager.twitterAccount.username;
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refresh) name:TFCategoriesFetched object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadCategories) name:TFCategoriesFetched object:nil];
+    
+    self.tableDataSource = [[TFCategoriesDataSource alloc] init];
+    self.tableView.dataSource = self.tableDataSource;
+    
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self reloadCategories];
 }
 
 - (void)didReceiveMemoryWarning
@@ -77,6 +73,8 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+#pragma mark - IBActions
 
 - (IBAction)didPressToolbarRightButton:(id)sender {
     //when editing this button is to save changes, otherwise to show the accounts actionsheet
@@ -127,67 +125,38 @@
     
     [self.tableView setEditing:!self.tableView.editing animated:YES];
     [self.tableView reloadRowsAtIndexPaths:reloadItems withRowAnimation:UITableViewRowAnimationFade];
-    [self.bottomRightButton setTitle:self.tableView.editing ? NSLocalizedString(@"Save", nil) : NSLocalizedString(@"Account", nil) forState:UIControlStateNormal];
-    [self.bottomLeftButton setTitle:self.tableView.editing ? NSLocalizedString(@"Cancel", nil) : NSLocalizedString(@"Edit", nil) forState:UIControlStateNormal];
+    
+    if (self.tableView.editing) {
+        [self.bottomLeftButton setFlatImage:nil];
+        [self.bottomRightButton setFlatImage:nil];
+        [self.bottomRightButton setTitle:NSLocalizedString(@" Save", nil) forState:UIControlStateNormal];
+        [self.bottomLeftButton setTitle:NSLocalizedString(@"Cancel", nil) forState:UIControlStateNormal];
+    }else{
+        [self.bottomLeftButton setFlatImage:[UIImage imageNamed:@"settings"]];
+        [self.bottomRightButton setFlatImage:[UIImage imageNamed:@"account"]];
+        [self.bottomRightButton setTitle:NSLocalizedString(@" Twitter", nil) forState:UIControlStateNormal];
+        [self.bottomLeftButton setTitle:NSLocalizedString(@" Edit", nil) forState:UIControlStateNormal];
+    }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:TFCategoriesEdited object:nil];
 }
 
-
-- (void)refresh
-{
-    [TFTweetsAdapter getFavoriteTweets];
-    [self reloadCategories];
-}
-
-- (TFCategory *)getCategoryByIndexPath:(NSIndexPath *)indexPath
-{
-    NSMutableDictionary *categories = [[TFCategories sharedCategories] categories];
-    NSNumber *key = self.sortedCategories[indexPath.row];
-    TFCategory *category = categories[key];
-    return category;
-}
+#pragma mark - Private Methods
 
 - (void)reloadCategories
 {
-    _sortedCategories = nil;
+    self.tableDataSource.sortedCategories = nil;
     [self.tableView reloadData];
+    [[NSNotificationCenter defaultCenter] postNotificationName:TFCategoriesEdited object:nil];
 }
 
 
-#pragma mark - TableView Data Source
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return self.sortedCategories.count;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    static NSString *CellID = @"TFCategoryCell";
-    TFCategory *category = [self getCategoryByIndexPath:indexPath];
-    
-    if (category.editing) {
-        TFEditCategoryCell *editCell = [tableView dequeueReusableCellWithIdentifier:@"TFEditCategoryCell"];
-        editCell.menuTableView = tableView;
-        editCell.category = category;
-        return editCell;
-    }else{
-        TFCategoryCell *cell = [tableView dequeueReusableCellWithIdentifier:CellID];
-        cell.textLabel.text = category.name;
-        cell.detailTextLabel.text = [category.ID intValue] == -1 ? NSLocalizedString(@"All of your favorite tweets", nil) : [NSString stringWithFormat:@"%i tweets", category.tweets.count];
-        
-        return cell;
-    }
-}
+#pragma mark - TableView Delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     TFCategory *category;
-    category = [self getCategoryByIndexPath:indexPath];
+    category = [self.tableDataSource getCategoryByIndexPath:indexPath];
     
     if (self.tableView.editing) {
         if (!category.editing) {
@@ -222,26 +191,6 @@
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
     return self.tableFooter;
-}
-
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    //can edit every category except the 'all' category
-    return indexPath.row > 0;
-}
-
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        TFCategory *category = [self getCategoryByIndexPath:indexPath];
-        [TFCategory deleteCategory:category completion:^(NSArray *categories, NSError *error) {
-            if (!error) {
-                NSMutableDictionary *categories = [[TFCategories sharedCategories] categories];
-                [categories removeObjectForKey:category.ID];
-                [self reloadCategories];
-            }
-        }];
-    }
 }
 
 #pragma mark - New Category Text Field Delegate
