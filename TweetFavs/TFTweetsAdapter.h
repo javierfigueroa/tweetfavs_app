@@ -15,7 +15,7 @@
 
 + (void)getFavoriteTweets;
 
-+ (void)getFavoriteTweetsSinceID:(NSNumber*)ID;
++ (void)getFavoriteTweetsSinceID:(NSNumber*)ID andMaxID:(NSNumber*)maxID completion:(void(^)(NSArray *tweets))completion;
 
 + (void)getTweetsByCategoryID:(NSNumber *)categoryID completion:(void(^)(void))completion;
 

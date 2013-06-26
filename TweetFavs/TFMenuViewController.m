@@ -172,14 +172,21 @@
         appDelegate.viewController.title = [category.ID intValue] == -1 ? @"TweetFavs" : category.name;
         
         if ([category.ID intValue] == -1) {
+            appDelegate.viewController.canLoadMore = YES;
+            appDelegate.viewController.pullToRefreshEnabled = YES;
+            [appDelegate.viewController setFooterViewVisibility:YES];
+            
             [TFTweetsAdapter getFavoriteTweets];
-            IIViewDeckController *deckController = appDelegate.deckController;
-            [deckController closeLeftViewAnimated:YES];
         }else{
+            appDelegate.viewController.canLoadMore = NO;
+            appDelegate.viewController.pullToRefreshEnabled = NO;
+            [appDelegate.viewController setFooterViewVisibility:NO];
+            
             [TFTweetsAdapter setTweets:category.tweets];
-            IIViewDeckController *deckController = appDelegate.deckController;
-            [deckController closeLeftViewAnimated:YES];
         }
+        
+        IIViewDeckController *deckController = appDelegate.deckController;
+        [deckController closeLeftViewAnimated:YES];
     }
 }
 

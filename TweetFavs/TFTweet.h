@@ -12,6 +12,7 @@
 @interface TFTweet : NSObject
 
 @property (nonatomic, strong) NSNumber *ID;
+@property (nonatomic, assign) BOOL edited;
 @property (nonatomic, strong) NSString *categoryID;
 @property (nonatomic, strong) NSString *status;
 @property (nonatomic, strong) NSString *username;

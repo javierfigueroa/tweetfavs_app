@@ -13,7 +13,10 @@
 #import "TFTweetViewController.h"
 #import "TFTweet.h"
 #import "TFTheme.h"
+#import "TFCategory.h"
 #import "TFCategories.h"
+#import "TFRefreshHeaderView.h"
+#import "TFRefreshFooterView.h"
 
 @interface TFViewController ()
 
@@ -36,10 +39,19 @@
     [TFTheme customizeFeedController:self];
     
     [self.tableView registerNib:[UINib nibWithNibName:@"TFFeedCell" bundle:nil] forCellReuseIdentifier:@"FeedCell"];
-    self.tableView.dataSource = self.tableViewDataSource;
     [self firstTimeAccountCheck];
     
+    TFRefreshHeaderView *header = [[TFRefreshHeaderView alloc] init];
+    self.headerView = header;
+    
+    TFRefreshFooterView *footer = [[TFRefreshFooterView alloc] init];
+    self.footerView = footer;
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getFavoriteTweets) name:TFCategoriesFetched object:nil];
+    self.tableView.dataSource = self.tableViewDataSource;
+    
+    self.canLoadMore = YES;
+    self.pullToRefreshEnabled = YES;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -56,7 +68,7 @@
 
 - (void)getFavoriteTweets
 {
-    [self.tableViewDataSource getFavoriteTweetsSinceID:nil];
+    [TFTweetsAdapter getFavoriteTweets];
 }
 
 - (void)firstTimeAccountCheck
@@ -96,4 +108,103 @@
     
 }
 
+#pragma mark - Pull to Refresh
+
+- (void) pinHeaderView
+{
+    [super pinHeaderView];
+    
+    // do custom handling for the header view
+    TFRefreshHeaderView *hv = (TFRefreshHeaderView *)self.headerView;
+    [hv.activityIndicator startAnimating];
+    hv.label.text = NSLocalizedString(@"Loading...", nil);
+}
+
+- (void) unpinHeaderView
+{
+    [super unpinHeaderView];
+    
+    // do custom handling for the header view
+    [[(TFRefreshHeaderView *)self.headerView activityIndicator] stopAnimating];
+}
+
+- (void) headerViewDidScroll:(BOOL)willRefreshOnRelease scrollView:(UIScrollView *)scrollView
+{
+    if (!self.pullToRefreshEnabled) {
+        self.headerView = nil;
+    }else{
+        TFRefreshHeaderView *header = [[TFRefreshHeaderView alloc] init];
+        self.headerView = header;
+    }
+    
+    TFRefreshHeaderView *hv = (TFRefreshHeaderView *)self.headerView;
+    if (willRefreshOnRelease)
+        hv.label.text = @"Release to refresh...";
+    else
+        hv.label.text = @"Pull down to refresh...";
+}
+
+- (BOOL) refresh
+{
+    if (![super refresh])
+        return NO;
+    
+    NSNumber *allKey = [NSNumber numberWithInt:-1];
+    TFCategory *category = [[TFCategories sharedCategories] categories][allKey];
+    TFTweet *firstTweet = category.tweets[0];
+    [TFTweetsAdapter getFavoriteTweetsSinceID:firstTweet.tweetID andMaxID:nil completion:^(NSArray *tweets) {
+        [self.tableView reloadData];
+        [self refreshCompleted];
+    }];
+    
+    return YES;
+}
+
+#pragma mark - Load More
+
+- (void) willBeginLoadingMore
+{
+    TFRefreshFooterView *fv = (TFRefreshFooterView *)self.footerView;
+    [fv.activityIndicator startAnimating];
+}
+
+- (void) loadMoreCompleted
+{
+    [super loadMoreCompleted];
+    
+    TFRefreshFooterView *fv = (TFRefreshFooterView *)self.footerView;
+    [fv.activityIndicator stopAnimating];
+    
+    if (!self.canLoadMore) {
+        // Do something if there are no more items to load
+        
+        // We can hide the footerView by:
+        [self setFooterViewVisibility:NO];
+        
+        // Just show a textual info that there are no more items to load
+    }
+}
+
+- (BOOL) loadMore
+{
+    if (![super loadMore])
+        return NO;
+    
+    // Do your async loading here
+    // See -addItemsOnBottom for more info on what to do after loading more items
+    
+    NSNumber *allKey = [NSNumber numberWithInt:-1];
+    TFCategory *category = [[TFCategories sharedCategories] categories][allKey];
+    TFTweet *lastTweet = category.tweets[category.tweets.count-1];
+    [TFTweetsAdapter getFavoriteTweetsSinceID:nil andMaxID:lastTweet.tweetID completion:^(NSArray *tweets) {
+        if (tweets.count == 1) {
+            NSNumber *tweetID = [NSNumber numberWithLongLong:[tweets[0][@"id"] longLongValue]];
+            self.canLoadMore = ![lastTweet.tweetID isEqualToNumber:tweetID];
+        }
+        
+        [self loadMoreCompleted];
+    }];
+    
+    return YES;
+}
 @end

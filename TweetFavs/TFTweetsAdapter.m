@@ -57,35 +57,51 @@
 
 + (void)getFavoriteTweets
 {
-    [[self class] getFavoriteTweetsSinceID:nil];
+    [[self class] getFavoriteTweetsSinceID:nil andMaxID:nil completion:nil];
 }
 
-+ (void)getFavoriteTweetsSinceID:(NSNumber*)ID
++ (void)getFavoriteTweetsSinceID:(NSNumber*)sinceID andMaxID:(NSNumber*)maxID completion:(void(^)(NSArray *tweets))completion
 {
     NSMutableDictionary *categories = [[TFCategories sharedCategories] categories];
     NSNumber *allKey = [NSNumber numberWithInt:-1];
     TFCategory *category = categories[allKey];
     
-    if (category.tweets.count == 0) {
+    if (category.tweets.count == 0 || sinceID || maxID) {
         MLSocialNetworksManager *manager = [MLSocialNetworksManager sharedManager];
-        [manager getFavoriteTweetsSinceID:ID completion:^(NSArray *tweets, NSError *error) {
+        [manager getFavoriteTweetsSinceID:sinceID andMaxID:maxID completion:^(NSArray *tweets, NSError *error) {
             
-            if (!ID) {
+            if (!sinceID && !maxID) {
                 [[[self class] dataSource].tweets removeAllObjects];
                 [category.tweets removeAllObjects];
             }
             
-            [tweets enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                TFTweet *tweet = [[TFTweet alloc] initWithAttributes:obj];
-                [category.tweets addObject:tweet];
-            }];
+            if (sinceID) {
+                [tweets enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                    TFTweet *tweet = [[TFTweet alloc] initWithAttributes:obj];
+                    [category.tweets insertObject:tweet atIndex:0];
+                }];
+            }else{
+                [tweets enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                    TFTweet *tweet = [[TFTweet alloc] initWithAttributes:obj];
+                    [category.tweets addObject:tweet];
+                }];
+            }
+            
             
             [[self class] dataSource].tweets = category.tweets;
             [[[self class] tableView] reloadData];
+            
+            if (completion) {
+                completion(tweets);
+            }
         }];
     }else{
         [[self class] dataSource].tweets = category.tweets;
         [[[self class] tableView] reloadData];
+        
+        if (completion) {
+            completion(category.tweets);
+        }
     }
 }
 

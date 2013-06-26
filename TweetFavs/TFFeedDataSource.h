@@ -12,6 +12,4 @@
 
 @property (nonatomic, strong) NSMutableArray *tweets;
 
-- (void)getFavoriteTweetsSinceID:(NSNumber*)tweetID;
-
 @end

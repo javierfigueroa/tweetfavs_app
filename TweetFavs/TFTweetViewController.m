@@ -70,20 +70,24 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    TFCategory *category;
-    category = [self.tableDataSource getCategoryByIndexPath:indexPath];
-    
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    
-    if (cell.accessoryType == UITableViewCellAccessoryCheckmark){
-        [TFTweet deleteTweet:self.tweet fromCategory:category Completion:nil];
-    }else{
-        [TFTweet addTweet:self.tweet toCategory:category Completion:nil];
+    //skip the all category
+    if (indexPath.row > 0) {
+        TFCategory *category;
+        category = [self.tableDataSource getCategoryByIndexPath:indexPath];
+        
+        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        
+        if (cell.accessoryType == UITableViewCellAccessoryCheckmark){
+            [TFTweet deleteTweet:self.tweet fromCategory:category Completion:nil];
+        }else{
+            [TFTweet addTweet:self.tweet toCategory:category Completion:nil];
+        }
+        
+        self.tweet.edited = YES;
+        [self configureTweet];
+        [self.categoriesTableView reloadRowsAtIndexPaths:@[indexPath]
+                                        withRowAnimation:UITableViewRowAnimationFade];
     }
-    
-    [self configureTweet];
-    [self.categoriesTableView reloadRowsAtIndexPaths:@[indexPath]
-                                    withRowAnimation:UITableViewRowAnimationFade];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section

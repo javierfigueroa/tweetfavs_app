@@ -31,7 +31,6 @@
 -(void)awakeFromNib{
     
     [TFTheme customizeTweetCell:self];
-    self.selectionStyle = UITableViewCellSelectionStyleNone;
 }
 
 @end

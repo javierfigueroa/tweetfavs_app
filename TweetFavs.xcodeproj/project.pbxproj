@@ -67,6 +67,10 @@
 		3BE389241779CE6A0051FF39 /* settings@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BE389221779CE6A0051FF39 /* settings@2x.png */; };
 		3BE3892A1779D4410051FF39 /* check.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BE389291779D4400051FF39 /* check.png */; };
 		3BE3893F177A47150051FF39 /* STableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BE3893E177A47150051FF39 /* STableViewController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		3BE38943177A484E0051FF39 /* TFRefreshFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BE38942177A484E0051FF39 /* TFRefreshFooterView.m */; };
+		3BE38945177A48600051FF39 /* TFRefreshFooterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BE38944177A48600051FF39 /* TFRefreshFooterView.xib */; };
+		3BE38949177B37D70051FF39 /* TFRefreshHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BE38948177B37D70051FF39 /* TFRefreshHeaderView.m */; };
+		3BE3894B177B37FA0051FF39 /* TFRefreshHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BE3894A177B37FA0051FF39 /* TFRefreshHeaderView.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -157,6 +161,12 @@
 		3BE389291779D4400051FF39 /* check.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = check.png; sourceTree = "<group>"; };
 		3BE3893D177A47150051FF39 /* STableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STableViewController.h; sourceTree = "<group>"; };
 		3BE3893E177A47150051FF39 /* STableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STableViewController.m; sourceTree = "<group>"; };
+		3BE38942177A484E0051FF39 /* TFRefreshFooterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFRefreshFooterView.m; sourceTree = "<group>"; };
+		3BE38944177A48600051FF39 /* TFRefreshFooterView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TFRefreshFooterView.xib; sourceTree = "<group>"; };
+		3BE38946177A49C70051FF39 /* TFRefreshFooterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFRefreshFooterView.h; sourceTree = "<group>"; };
+		3BE38947177B37D70051FF39 /* TFRefreshHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFRefreshHeaderView.h; sourceTree = "<group>"; };
+		3BE38948177B37D70051FF39 /* TFRefreshHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFRefreshHeaderView.m; sourceTree = "<group>"; };
+		3BE3894A177B37FA0051FF39 /* TFRefreshHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TFRefreshHeaderView.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -239,6 +249,7 @@
 				3BAD9CFE1773499200F6FFCA /* Images */,
 				3BAD9CF31773473C00F6FFCA /* Libraries */,
 				3BAD9CDC17733E4C00F6FFCA /* Cells */,
+				3BE38940177A48270051FF39 /* Views */,
 				3BAD9D0D177355D300F6FFCA /* TFCategories.h */,
 				3BAD9D0E177355D300F6FFCA /* TFCategories.m */,
 				3BAD9D2E17739AF200F6FFCA /* TFTweetsAdapter.h */,
@@ -376,6 +387,19 @@
 			path = STableViewController;
 			sourceTree = "<group>";
 		};
+		3BE38940177A48270051FF39 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				3BE38946177A49C70051FF39 /* TFRefreshFooterView.h */,
+				3BE38942177A484E0051FF39 /* TFRefreshFooterView.m */,
+				3BE38944177A48600051FF39 /* TFRefreshFooterView.xib */,
+				3BE38947177B37D70051FF39 /* TFRefreshHeaderView.h */,
+				3BE38948177B37D70051FF39 /* TFRefreshHeaderView.m */,
+				3BE3894A177B37FA0051FF39 /* TFRefreshHeaderView.xib */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -448,6 +472,8 @@
 				3BE389231779CE6A0051FF39 /* account@2x.png in Resources */,
 				3BE389241779CE6A0051FF39 /* settings@2x.png in Resources */,
 				3BE3892A1779D4410051FF39 /* check.png in Resources */,
+				3BE38945177A48600051FF39 /* TFRefreshFooterView.xib in Resources */,
+				3BE3894B177B37FA0051FF39 /* TFRefreshHeaderView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -481,6 +507,8 @@
 				3BE3891F1779CDA40051FF39 /* UIColor+JSFlatButton.m in Sources */,
 				3BE389201779CDA40051FF39 /* UIImage+JSFlatButton.m in Sources */,
 				3BE3893F177A47150051FF39 /* STableViewController.m in Sources */,
+				3BE38943177A484E0051FF39 /* TFRefreshFooterView.m in Sources */,
+				3BE38949177B37D70051FF39 /* TFRefreshHeaderView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

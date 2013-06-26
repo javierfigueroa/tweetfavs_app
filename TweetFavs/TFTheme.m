@@ -49,7 +49,7 @@
 
 + (NSString*)navigationFontName
 {
-    return @"GillSans-Bold";
+    return @"Helvetica-Bold";
 }
 
 + (UIImage *)backgroundImage
@@ -102,16 +102,6 @@
     cell.likeCountLabel.textColor = mainColorLight;
     cell.likeCountLabel.font =  [UIFont fontWithName:[self fontName] size:10.0f];
     
-    cell.picImageView.contentMode = UIViewContentModeScaleAspectFill;
-    cell.picImageView.clipsToBounds = YES;
-    cell.picImageView.layer.cornerRadius = 20.0f;
-    
-    cell.picImageContainer.backgroundColor = [UIColor whiteColor];
-    cell.picImageContainer.layer.borderColor = [UIColor colorWithWhite:0.8f alpha:0.6f].CGColor;
-    cell.picImageContainer.layer.borderWidth = 1.0f;
-    cell.picImageContainer.layer.cornerRadius = 20.0f;
-    cell.profileImageView.clipsToBounds = YES;
-    cell.profileImageView.layer.cornerRadius = 20.0f;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
 }
 
@@ -154,8 +144,8 @@
 
 + (void)customizeFeedController:(TFViewController *)controller
 {
+    controller.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     controller.tableView.backgroundColor = [UIColor whiteColor];
-    controller.tableView.separatorColor = [UIColor colorWithWhite:0.9 alpha:0.6];
 }
 
 + (void)customizeCategoryCell:(TFCategoryCell *)cell

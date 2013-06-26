@@ -28,6 +28,7 @@
     self = [super init];
     if (self) {
         [self updateWithAttributes:data];
+        self.edited = YES;
     }
     return self;
 }

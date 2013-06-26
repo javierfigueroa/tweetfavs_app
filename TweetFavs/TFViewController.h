@@ -7,11 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "STableViewController.h"
 
 @class TFFeedDataSource;
-@interface TFViewController : UIViewController<UITableViewDelegate>
+@interface TFViewController : STableViewController<UITableViewDelegate>
 
+@property (assign, nonatomic) BOOL loadMoreEnabled;
 @property (strong, nonatomic) TFFeedDataSource *tableViewDataSource;
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (retain, nonatomic) IBOutlet UITableView *tableView;
 
 @end
