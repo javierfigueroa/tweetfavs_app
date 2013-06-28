@@ -31,6 +31,12 @@
     return feedController.tableViewDataSource;
 }
 
++ (void)reloadDataSource
+{
+    [[[self class] tableView] reloadData];
+    [[NSNotificationCenter defaultCenter] postNotificationName:TFTweetsLoaded object:nil];
+}
+
 + (void)getCategories
 {
     ACAccount *twitterAccount = [[MLSocialNetworksManager sharedManager] twitterAccount];
@@ -70,34 +76,52 @@
         MLSocialNetworksManager *manager = [MLSocialNetworksManager sharedManager];
         [manager getFavoriteTweetsSinceID:sinceID andMaxID:maxID completion:^(NSArray *tweets, NSError *error) {
             
-            if (!sinceID && !maxID) {
-                [[[self class] dataSource].tweets removeAllObjects];
-                [category.tweets removeAllObjects];
-            }
-            
-            if (sinceID) {
-                [tweets enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                    TFTweet *tweet = [[TFTweet alloc] initWithAttributes:obj];
-                    [category.tweets insertObject:tweet atIndex:0];
-                }];
+            //Error case when twitter fails
+            if ([tweets isKindOfClass:[NSDictionary class]]) {
+                NSDictionary *response = (NSDictionary*)tweets;
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Twitter Error", nil) message:response[@"errors"][0][@"message"] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [alert show];
+                
+                [[self class] dataSource].tweets = category.tweets;
+                [[self class] reloadDataSource];
+                
+                if (completion) {
+                    completion(@[]);
+                }
             }else{
-                [tweets enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                    TFTweet *tweet = [[TFTweet alloc] initWithAttributes:obj];
-                    [category.tweets addObject:tweet];
-                }];
-            }
-            
-            
-            [[self class] dataSource].tweets = category.tweets;
-            [[[self class] tableView] reloadData];
-            
-            if (completion) {
-                completion(tweets);
+                //usually the first time we get tweets
+                if (!sinceID && !maxID) {
+                    [[[self class] dataSource].tweets removeAllObjects];
+                    [category.tweets removeAllObjects];
+                }
+                
+                //append to the top of the list since these are new tweets
+                if (sinceID) {
+                    [tweets enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                        TFTweet *tweet = [[TFTweet alloc] initWithAttributes:obj];
+                        [category.tweets insertObject:tweet atIndex:0];
+                    }];
+                }else{
+                //append to the end, when loading more tweets
+                    if (!maxID || tweets.count > 1) {
+                        [tweets enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                            TFTweet *tweet = [[TFTweet alloc] initWithAttributes:obj];
+                            [category.tweets addObject:tweet];
+                        }];   
+                    }
+                }
+                
+                [[self class] dataSource].tweets = category.tweets;
+                [[self class] reloadDataSource];
+                
+                if (completion) {
+                    completion(tweets);
+                }
             }
         }];
     }else{
         [[self class] dataSource].tweets = category.tweets;
-        [[[self class] tableView] reloadData];
+        [[self class] reloadDataSource];
         
         if (completion) {
             completion(category.tweets);
@@ -108,7 +132,7 @@
 + (void)setTweets:(NSMutableArray *)tweets
 {
     [[self class] dataSource].tweets = tweets;
-    [[[self class] tableView] reloadData];
+    [[self class] reloadDataSource];
 }
 
 + (void)getTweetsByCategoryID:(NSNumber *)categoryID completion:(void(^)(void))completion
@@ -121,7 +145,7 @@
         [category.tweets addObjectsFromArray:tweets];
         
         [[self class] dataSource].tweets = category.tweets;
-        [[[self class] tableView] reloadData];
+        [[self class] reloadDataSource];
         
         if (completion) {
             completion();

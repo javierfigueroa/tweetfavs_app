@@ -20,6 +20,7 @@
 #import "TFTheme.h"
 #import "TFCategoriesDataSource.h"
 #import "JSFlatButton.h"
+#import "IIViewDeckController.h"
 #define trimString( object ) [object stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet] ]
 
 
@@ -56,16 +57,11 @@
     self.accountLabel.text = manager.twitterAccount.username;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadCategories) name:TFCategoriesFetched object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadCategories) name:TFCategoriesEdited object:nil];
     
     self.tableDataSource = [[TFCategoriesDataSource alloc] init];
     self.tableView.dataSource = self.tableDataSource;
     
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    [self reloadCategories];
 }
 
 - (void)didReceiveMemoryWarning
@@ -92,7 +88,7 @@
             }
         }];
         
-        [self didPressToolbarLeftButton:nil];
+        [self toggleEditMode];
     }else{
         MLSocialNetworksManager *manager = [MLSocialNetworksManager sharedManager];
         [manager getTwitterAccounts:^(NSObject *response, NSError *error) {
@@ -110,6 +106,26 @@
 }
 
 - (IBAction)didPressToolbarLeftButton:(id)sender {
+    [self toggleEditMode];
+}
+
+#pragma mark - Private Methods
+
+- (void)setAllCategoryActive
+{
+    TFAppDelegate *appDelegate = (TFAppDelegate*)[UIApplication sharedApplication].delegate;
+    appDelegate.viewController.title = @"TweetFavs";
+    appDelegate.viewController.canLoadMore = YES;
+    appDelegate.viewController.pullToRefreshEnabled = YES;
+    [appDelegate.viewController setFooterViewVisibility:YES];
+    
+    [TFTweetsAdapter getFavoriteTweets];
+    IIViewDeckController *deckController = self.viewDeckController;
+    [deckController closeLeftViewAnimated:YES];
+}
+
+- (void)toggleEditMode
+{
     //when editing this button is to finishing the editing mode
     NSMutableArray *reloadItems = [[NSMutableArray alloc] init];
     if (self.tableView.editing) {
@@ -121,7 +137,6 @@
             [reloadItems addObject:[NSIndexPath indexPathForRow:i inSection:0]];
         };
     }
-    
     
     [self.tableView setEditing:!self.tableView.editing animated:YES];
     [self.tableView reloadRowsAtIndexPaths:reloadItems withRowAnimation:UITableViewRowAnimationFade];
@@ -141,13 +156,10 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:TFCategoriesEdited object:nil];
 }
 
-#pragma mark - Private Methods
-
 - (void)reloadCategories
 {
     self.tableDataSource.sortedCategories = nil;
     [self.tableView reloadData];
-    [[NSNotificationCenter defaultCenter] postNotificationName:TFCategoriesEdited object:nil];
 }
 
 
@@ -159,34 +171,31 @@
     category = [self.tableDataSource getCategoryByIndexPath:indexPath];
     
     if (self.tableView.editing) {
-        if (!category.editing) {
+        if (!category.editing && indexPath.row > 0) {
             category.editing = YES;
             [self.tableView beginUpdates];
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationLeft];
-            [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationLeft];
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath]
+                                  withRowAnimation:UITableViewRowAnimationLeft];
+            [self.tableView insertRowsAtIndexPaths:@[indexPath]
+                                  withRowAnimation:UITableViewRowAnimationLeft];
             [self.tableView endUpdates];
         }
     }else{        
         category.editing = NO;
-        TFAppDelegate *appDelegate = (TFAppDelegate*)[UIApplication sharedApplication].delegate;
-        appDelegate.viewController.title = [category.ID intValue] == -1 ? @"TweetFavs" : category.name;
-        
         if ([category.ID intValue] == -1) {
-            appDelegate.viewController.canLoadMore = YES;
-            appDelegate.viewController.pullToRefreshEnabled = YES;
-            [appDelegate.viewController setFooterViewVisibility:YES];
-            
-            [TFTweetsAdapter getFavoriteTweets];
+            [self setAllCategoryActive];
         }else{
+            TFAppDelegate *appDelegate = (TFAppDelegate*)[UIApplication sharedApplication].delegate;
+            appDelegate.viewController.title = category.name;
             appDelegate.viewController.canLoadMore = NO;
             appDelegate.viewController.pullToRefreshEnabled = NO;
             [appDelegate.viewController setFooterViewVisibility:NO];
             
             [TFTweetsAdapter setTweets:category.tweets];
+            IIViewDeckController *deckController = self.viewDeckController;
+            [deckController closeLeftViewAnimated:YES];
         }
         
-        IIViewDeckController *deckController = appDelegate.deckController;
-        [deckController closeLeftViewAnimated:YES];
     }
 }
 

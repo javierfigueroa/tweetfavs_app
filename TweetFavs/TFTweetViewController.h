@@ -16,7 +16,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *categoriesLabel;
 @property (weak, nonatomic) IBOutlet UILabel *retweetsLabel;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
-@property (weak, nonatomic) IBOutlet UILabel *statusLabel;
+@property (weak, nonatomic) IBOutlet UITextView *statusLabel;
 @property (weak, nonatomic) IBOutlet UITableView *categoriesTableView;
 @property (strong, nonatomic) TFCategoriesDataSource *tableDataSource;
 @property (strong, nonatomic) IBOutlet UIView *tableHeader;

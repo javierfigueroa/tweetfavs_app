@@ -10,6 +10,7 @@
 
 extern NSString *const TFCategoriesFetched;
 extern NSString *const TFCategoriesEdited;
+extern NSString *const TFTweetsLoaded;
 
 @interface TFCategories : NSObject
 

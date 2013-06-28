@@ -48,15 +48,24 @@
     [NSNumber numberWithLongLong:[tweet[@"tweet_id"] longLongValue]] :
     [NSNumber numberWithLongLong:[tweet[@"id"] longLongValue]];
     
-    self.username = tweet[@"user"][@"name"];
-    self.status = tweet[@"text"];
+    self.username = tweet[@"username"] && tweet[@"username"] != (id)[NSNull null] ? tweet[@"username"] : tweet[@"user"][@"name"];
+    self.status = tweet[@"text"] ? tweet[@"text"] : tweet[@"status"];
     
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    formatter.dateFormat = @"eee MMM dd HH:mm:ss ZZZZ yyyy";
-    self.created = [formatter dateFromString:tweet[@"created_at"]];
+    if (tweet[@"created_at"] != (id)[NSNull null]) {
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = @"eee MMM dd HH:mm:ss ZZZZ yyyy";
+        self.created = [formatter dateFromString:tweet[@"created_at"]];
+        
+        if (!self.created) {
+            formatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss'Z'";
+            self.created = [formatter dateFromString:tweet[@"created_at"]];
+        }
+    }
     
-    self.retweetCount = [NSNumber numberWithInt:[tweet[@"retweet_count"] intValue]];
-    self.avatarURL = [NSURL URLWithString:tweet[@"user"][@"profile_image_url"]];
+    self.retweetCount = tweet[@"retweets"] && tweet[@"retweets"] != (id)[NSNull null]?
+    [NSNumber numberWithInt:[tweet[@"retweets"] intValue]] :
+    [NSNumber numberWithInt:[tweet[@"retweet_count"] intValue]];
+    self.avatarURL = [NSURL URLWithString:(tweet[@"avatarUrl"] && tweet[@"avatarUrl"] != (id)[NSNull null] ? tweet[@"avatarUrl"] :tweet[@"user"][@"profile_image_url"])];
     
     NSArray *categories = data[@"categories"];
     [categories enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
@@ -98,7 +107,7 @@
     ACAccount *twitterAccount = [[MLSocialNetworksManager sharedManager] twitterAccount];
     NSString *twitterId = [twitterAccount valueForKeyPath:@"properties.user_id"];
     
-    NSDictionary *parameters = @{@"twitter_id":twitterId, @"category_id":category.ID, @"tweet_id":tweet.tweetID};
+    NSDictionary *parameters = @{@"twitter_id":twitterId, @"category_id":category.ID, @"tweet_id":tweet.tweetID, @"status": tweet.status, @"created_at":tweet.created, @"retweets":tweet.retweetCount, @"avatarUrl":tweet.avatarURL.absoluteString, @"username":tweet.username};
     
     [category.tweets addObject:tweet];
     

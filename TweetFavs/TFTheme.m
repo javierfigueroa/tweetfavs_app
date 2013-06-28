@@ -146,6 +146,7 @@
 {
     controller.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     controller.tableView.backgroundColor = [UIColor whiteColor];
+//    controller.emptyStateLabel.textColor = [self mainColor];
 }
 
 + (void)customizeCategoryCell:(TFCategoryCell *)cell
@@ -212,6 +213,7 @@
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
+    [[UIBarButtonItem appearance] setBackgroundImage:[self backgroundImage] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     
     [[UIBarButtonItem appearance] setBackButtonBackgroundImage:[self backgroundImage] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     

@@ -13,6 +13,7 @@
 
 NSString *const TFCategoriesFetched = @"TFCategoriesFetched";
 NSString *const TFCategoriesEdited = @"TFCategoriesEdited";
+NSString *const TFTweetsLoaded = @"TFTweetsLoaded";
 
 @implementation TFCategories
 

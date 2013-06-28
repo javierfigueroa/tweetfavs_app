@@ -15,5 +15,8 @@
 @property (assign, nonatomic) BOOL loadMoreEnabled;
 @property (strong, nonatomic) TFFeedDataSource *tableViewDataSource;
 @property (retain, nonatomic) IBOutlet UITableView *tableView;
+@property (strong, nonatomic) IBOutlet UIView *emptyStateView;
+@property (weak, nonatomic) IBOutlet UIImageView *emptyStateImage;
+@property (weak, nonatomic) IBOutlet UILabel *emptyStateLabel;
 
 @end

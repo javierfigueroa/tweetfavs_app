@@ -110,7 +110,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    TFFeedCell* cell = [tableView dequeueReusableCellWithIdentifier:@"FeedCell" forIndexPath:indexPath];
+    TFFeedCell* cell = [tableView dequeueReusableCellWithIdentifier:@"FeedCell" forIndexPath:indexPath];    
     TFTweet *tweet = self.tweets[indexPath.row];
     
     if (tweet.status.length == 0) {

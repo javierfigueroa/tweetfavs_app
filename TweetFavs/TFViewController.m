@@ -17,6 +17,7 @@
 #import "TFCategories.h"
 #import "TFRefreshHeaderView.h"
 #import "TFRefreshFooterView.h"
+#import "IIViewDeckController.h"
 
 @interface TFViewController ()
 
@@ -31,9 +32,8 @@
     
     [TFTheme styleNavigationBar];
     
-    UIImageView* menuView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"nav-menu-icon"]];
-    UIBarButtonItem* menuItem = [[UIBarButtonItem alloc] initWithCustomView:menuView];
-    self.navigationItem.leftBarButtonItem = menuItem;
+    
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"nav-menu-icon"] style:UIBarButtonItemStylePlain target:self.viewDeckController action:@selector(toggleLeftView)];
     
     self.title = @"TweetFavs";
     [TFTheme customizeFeedController:self];
@@ -48,6 +48,7 @@
     self.footerView = footer;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getFavoriteTweets) name:TFCategoriesFetched object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReloadTable) name:TFTweetsLoaded object:nil];
     self.tableView.dataSource = self.tableViewDataSource;
     
     self.canLoadMore = YES;
@@ -58,12 +59,22 @@
 {
     [super viewWillAppear:animated];
     [self.tableView reloadData];
+    [self didReloadTable];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)didReloadTable
+{
+    if (self.tableViewDataSource.tweets.count == 0) {
+        [self.tableView addSubview:self.emptyStateView];
+    }else{
+        [self.emptyStateView removeFromSuperview];
+    }
 }
 
 - (void)getFavoriteTweets
@@ -146,11 +157,15 @@
 
 - (BOOL) refresh
 {
-    if (![super refresh])
+    if (self.isLoadingMore || ![super refresh])
         return NO;
     
     NSNumber *allKey = [NSNumber numberWithInt:-1];
     TFCategory *category = [[TFCategories sharedCategories] categories][allKey];
+    if (category.tweets.count == 0) {
+        return NO;
+    }
+    
     TFTweet *firstTweet = category.tweets[0];
     [TFTweetsAdapter getFavoriteTweetsSinceID:firstTweet.tweetID andMaxID:nil completion:^(NSArray *tweets) {
         [self.tableView reloadData];

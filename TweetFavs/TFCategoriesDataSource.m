@@ -61,6 +61,7 @@
         TFEditCategoryCell *editCell = [tableView dequeueReusableCellWithIdentifier:@"TFEditCategoryCell"];
         editCell.menuTableView = tableView;
         editCell.category = category;
+        editCell.selectionStyle = UITableViewCellSelectionStyleNone;
         return editCell;
     }else{
         TFCategoryCell *cell = [tableView dequeueReusableCellWithIdentifier:CellID];

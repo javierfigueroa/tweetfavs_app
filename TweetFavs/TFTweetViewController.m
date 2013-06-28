@@ -85,8 +85,10 @@
         
         self.tweet.edited = YES;
         [self configureTweet];
-        [self.categoriesTableView reloadRowsAtIndexPaths:@[indexPath]
-                                        withRowAnimation:UITableViewRowAnimationFade];
+        [[NSNotificationCenter defaultCenter] postNotificationName:TFCategoriesEdited object:nil];
+        
+//        [self.categoriesTableView reloadRowsAtIndexPaths:@[indexPath]
+//                                        withRowAnimation:UITableViewRowAnimationFade];
     }
 }
 

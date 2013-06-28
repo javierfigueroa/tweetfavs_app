@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3B77CCD5177CCC4100379106 /* sad-512.png in Resources */ = {isa = PBXBuildFile; fileRef = 3B77CCD4177CCC4100379106 /* sad-512.png */; };
 		3BAD9CAA1772B2B200F6FFCA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BAD9CA91772B2B200F6FFCA /* UIKit.framework */; };
 		3BAD9CAC1772B2B200F6FFCA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BAD9CAB1772B2B200F6FFCA /* Foundation.framework */; };
 		3BAD9CAE1772B2B200F6FFCA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BAD9CAD1772B2B200F6FFCA /* CoreGraphics.framework */; };
@@ -74,6 +75,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3B77CCD4177CCC4100379106 /* sad-512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sad-512.png"; sourceTree = "<group>"; };
 		3BAD9CA61772B2B200F6FFCA /* TweetFavs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TweetFavs.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BAD9CA91772B2B200F6FFCA /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		3BAD9CAB1772B2B200F6FFCA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -327,6 +329,7 @@
 		3BAD9CFE1773499200F6FFCA /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				3B77CCD4177CCC4100379106 /* sad-512.png */,
 				3BE389291779D4400051FF39 /* check.png */,
 				3BE389211779CE690051FF39 /* account@2x.png */,
 				3BE389221779CE6A0051FF39 /* settings@2x.png */,
@@ -474,6 +477,7 @@
 				3BE3892A1779D4410051FF39 /* check.png in Resources */,
 				3BE38945177A48600051FF39 /* TFRefreshFooterView.xib in Resources */,
 				3BE3894B177B37FA0051FF39 /* TFRefreshHeaderView.xib in Resources */,
+				3B77CCD5177CCC4100379106 /* sad-512.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
