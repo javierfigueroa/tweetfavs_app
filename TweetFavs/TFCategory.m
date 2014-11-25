@@ -9,7 +9,7 @@
 #import "TFCategory.h"
 #import "TFAPIClient.h"
 #import "TFTweet.h"
-#import "MLSocialNetworksManager.h"
+#import "TFTwitterManager.h"
 
 @implementation TFCategory
 
@@ -42,12 +42,13 @@
 
 + (void)addCategoryWithName:(NSString*)name completion:(void(^)(TFCategory *category, NSError *error))completion
 {
-    ACAccount *twitterAccount = [[MLSocialNetworksManager sharedManager] twitterAccount];
+    ACAccount *twitterAccount = [[TFTwitterManager sharedManager] twitterAccount];
     NSString *userId = [twitterAccount valueForKeyPath:@"properties.user_id"];
     
     NSDictionary *parameters = @{@"twitter_id":userId, @"name": name};
-    [[TFAPIClient sharedClient] postPath:@"categories.json" parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:nil];
+    [[TFAPIClient sharedClient] POST:@"categories.json" parameters:parameters success:^(NSURLSessionDataTask *task, id responseObject) {
+        
+        NSDictionary *JSON = (NSDictionary*)responseObject;
 #if DEBUG
         NSLog(@"%@", JSON);
 #endif
@@ -55,9 +56,8 @@
         if (completion) {
             completion(category, nil);
         }
-
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
         if (completion) {
             completion(nil, error);
         }
@@ -67,14 +67,14 @@
 + (void)updateCategory:(TFCategory*)category completion:(void(^)(TFCategory *category, NSError *error))completion
 
 {
-    ACAccount *twitterAccount = [[MLSocialNetworksManager sharedManager] twitterAccount];
+    ACAccount *twitterAccount = [[TFTwitterManager sharedManager] twitterAccount];
     NSString *userId = [twitterAccount valueForKeyPath:@"properties.user_id"];
     
     NSDictionary *parameters = @{@"twitter_id":userId, @"name": category.name};
     NSString *url = [NSString stringWithFormat:@"categories/%@.json", category.ID];
     
-    [[TFAPIClient sharedClient] putPath:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:nil];
+    [[TFAPIClient sharedClient] PUT:url parameters:parameters success:^(NSURLSessionDataTask *task, id responseObject) {
+        NSDictionary *JSON = (NSDictionary*)responseObject;
 #if DEBUG
         NSLog(@"%@", JSON);
 #endif
@@ -82,7 +82,8 @@
         if (completion) {
             completion(category, nil);
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
         if (completion) {
             completion(nil, error);
         }
@@ -92,8 +93,8 @@
 + (void)getCategoriesById:(NSString*)userId andCompletion:(void(^)(NSArray *categories, NSError *error))completion
 {
     NSString *url = [NSString stringWithFormat:@"categories/%@.json", userId];
-    [[TFAPIClient sharedClient] getPath:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSArray *JSON = (NSArray*)[NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:nil];
+    [[TFAPIClient sharedClient] GET:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        NSArray *JSON = (NSArray*)responseObject;
 #if DEBUG
         NSLog(@"%@", JSON);
 #endif
@@ -107,7 +108,7 @@
             completion(categories, nil);
         }
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
         if (completion) {
             completion(nil, error);
         }
@@ -117,8 +118,8 @@
 + (void)getCategoriesByTweetId:(NSNumber*)tweetID andCompletion:(void(^)(NSArray *categories, NSError *error))completion
 {
     NSString *url = [NSString stringWithFormat:@"categories/by/tweet/%@.json", tweetID];
-    [[TFAPIClient sharedClient] getPath:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSArray *JSON = (NSArray*)[NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:nil];
+    [[TFAPIClient sharedClient] GET:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        NSArray *JSON = (NSArray*)responseObject;
 #if DEBUG
         NSLog(@"%@", JSON);
 #endif
@@ -132,7 +133,7 @@
             completion(categories, nil);
         }
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
         if (completion) {
             completion(nil, error);
         }
@@ -142,12 +143,12 @@
 + (void)deleteCategory:(TFCategory*)category completion:(void(^)(NSArray *categories, NSError *error))completion
 
 {
-    ACAccount *twitterAccount = [[MLSocialNetworksManager sharedManager] twitterAccount];
+    ACAccount *twitterAccount = [[TFTwitterManager sharedManager] twitterAccount];
     NSString *userId = [twitterAccount valueForKeyPath:@"properties.user_id"];
     
     NSString *url = [NSString stringWithFormat:@"categories/%@/%@.json", userId, category.ID];
-    [[TFAPIClient sharedClient] deletePath:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:nil];
+    [[TFAPIClient sharedClient] DELETE:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        NSDictionary *JSON = (NSDictionary*)responseObject;
 #if DEBUG
         NSLog(@"%@", JSON);
 #endif
@@ -155,7 +156,7 @@
             completion(nil, nil);
         }
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
         if (completion) {
             completion(nil, error);
         }

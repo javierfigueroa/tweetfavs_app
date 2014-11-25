@@ -9,7 +9,6 @@
 #import "TFCategories.h"
 #import "TFCategory.h"
 #import "TFTweetsAdapter.h"
-#import "MLSocialNetworksManager.h"
 
 NSString *const TFCategoriesFetched = @"TFCategoriesFetched";
 NSString *const TFCategoriesEdited = @"TFCategoriesEdited";

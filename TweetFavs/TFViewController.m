@@ -7,7 +7,6 @@
 //
 
 #import "TFViewController.h"
-#import "MLSocialNetworksManager.h"
 #import "TFFeedDataSource.h"
 #import "TFTweetsAdapter.h"
 #import "TFTweetViewController.h"
@@ -18,6 +17,7 @@
 #import "TFRefreshHeaderView.h"
 #import "TFRefreshFooterView.h"
 #import "IIViewDeckController.h"
+#import "TFTwitterManager.h"
 
 @interface TFViewController ()
 
@@ -84,7 +84,7 @@
 
 - (void)firstTimeAccountCheck
 {
-    MLSocialNetworksManager *manager = [MLSocialNetworksManager sharedManager];
+    TFTwitterManager *manager = [TFTwitterManager sharedManager];
     if (manager.twitterAccount ) {
         [TFTweetsAdapter getCategories];
     }else{
@@ -210,6 +210,10 @@
     
     NSNumber *allKey = [NSNumber numberWithInt:-1];
     TFCategory *category = [[TFCategories sharedCategories] categories][allKey];
+    if (!category.tweets.count) {
+        return NO;
+    }
+    
     TFTweet *lastTweet = category.tweets[category.tweets.count-1];
     [TFTweetsAdapter getFavoriteTweetsSinceID:nil andMaxID:lastTweet.tweetID completion:^(NSArray *tweets) {
         if (tweets.count == 1) {

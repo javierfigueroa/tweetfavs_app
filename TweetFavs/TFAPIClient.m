@@ -7,7 +7,7 @@
 //
 
 #import "TFAPIClient.h"
-#import "AFJSONRequestOperation.h"
+
 
 static NSString * const kAPIBaseURLString =
 //@"http://0.0.0.0:3000/";
@@ -23,6 +23,8 @@ static NSString * const kAPIBaseURLString =
     });
     
     return _sharedClient;
+    
+    
 }
 
 - (id)initWithBaseURL:(NSURL *)url {
@@ -31,7 +33,8 @@ static NSString * const kAPIBaseURLString =
         return nil;
     }
     
-    [self setDefaultHeader:@"Content-Type" value:@"application/x-www-form-urlencoded; charset=utf-8"];
+    
+//    [self setDefaultHeader:@"Content-Type" value:@"application/x-www-form-urlencoded; charset=utf-8"];
     
     return self;
 }

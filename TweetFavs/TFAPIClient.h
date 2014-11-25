@@ -7,9 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AFHTTPClient.h"
+#import <AFNetworking/AFNetworking.h>
 
-@interface TFAPIClient : AFHTTPClient
+@interface TFAPIClient : AFHTTPSessionManager
 
 + (TFAPIClient *)sharedClient;
 

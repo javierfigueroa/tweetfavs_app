@@ -7,7 +7,7 @@
 //
 
 #import "TFTweet.h"
-#import "MLSocialNetworksManager.h"
+#import "TFTwitterManager.h"
 #import "TFAPIClient.h"
 #import "TFCategory.h"
 #import "TFTweetsAdapter.h"
@@ -76,12 +76,12 @@
 
 + (void)getTweetsByCategoryId:(NSNumber*)categoryId andCompletion:(void(^)(NSArray *tweets, NSError *error))completion
 {
-    ACAccount *twitterAccount = [[MLSocialNetworksManager sharedManager] twitterAccount];
+    ACAccount *twitterAccount = [[TFTwitterManager sharedManager] twitterAccount];
     NSString *twitterId = [twitterAccount valueForKeyPath:@"properties.user_id"];
     NSString *url = [NSString stringWithFormat:@"tweets/%@/%@.json", twitterId, categoryId];
     
-    [[TFAPIClient sharedClient] getPath:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSArray *JSON = (NSArray*)[NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:nil];
+    [[TFAPIClient sharedClient] GET:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        NSArray *JSON = (NSArray*)responseObject;
 #if DEBUG
         NSLog(@"%@", JSON);
 #endif
@@ -95,7 +95,7 @@
             completion(tweets, nil);
         }
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
         if (completion) {
             completion(nil, error);
         }
@@ -104,15 +104,15 @@
 
 + (void)addTweet:(TFTweet*)tweet toCategory:(TFCategory*)category Completion:(void(^)(NSArray *tweets, NSError *error))completion
 {
-    ACAccount *twitterAccount = [[MLSocialNetworksManager sharedManager] twitterAccount];
+    ACAccount *twitterAccount = [[TFTwitterManager sharedManager] twitterAccount];
     NSString *twitterId = [twitterAccount valueForKeyPath:@"properties.user_id"];
     
     NSDictionary *parameters = @{@"twitter_id":twitterId, @"category_id":category.ID, @"tweet_id":tweet.tweetID, @"status": tweet.status, @"created_at":tweet.created, @"retweets":tweet.retweetCount, @"avatarUrl":tweet.avatarURL.absoluteString, @"username":tweet.username};
     
     [category.tweets addObject:tweet];
     
-    [[TFAPIClient sharedClient] postPath:@"tweets.json" parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSArray *JSON = (NSArray*)[NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:nil];
+    [[TFAPIClient sharedClient] POST:@"tweets.json" parameters:parameters success:^(NSURLSessionDataTask *task, id responseObject) {
+        NSArray *JSON = (NSArray*)responseObject;
 #if DEBUG
         NSLog(@"%@", JSON);
 #endif
@@ -121,7 +121,7 @@
             completion(nil, nil);
         }
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
         if (completion) {
             [category.tweets removeObject:tweet];
             completion(nil, error);
@@ -131,7 +131,7 @@
 
 + (void)deleteTweet:(TFTweet*)tweet fromCategory:(TFCategory*)category Completion:(void(^)(NSArray *tweets, NSError *error))completion
 {
-    ACAccount *twitterAccount = [[MLSocialNetworksManager sharedManager] twitterAccount];
+    ACAccount *twitterAccount = [[TFTwitterManager sharedManager] twitterAccount];
     NSString *twitterId = [twitterAccount valueForKeyPath:@"properties.user_id"];
     
     TFTweet *tweetToRemove = [TFTweetsAdapter findTweetById:tweet.tweetID inCategory:category];
@@ -140,7 +140,7 @@
     
     NSString *url = [NSString stringWithFormat:@"tweets/%@/%@/%@.json", twitterId, category.ID, tweet.tweetID];
     
-    [[TFAPIClient sharedClient] deletePath:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [[TFAPIClient sharedClient] DELETE:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
 //        NSArray *JSON = (NSArray*)[NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:nil];
 //#if DEBUG
 //        NSLog(@"%@", JSON);
@@ -150,7 +150,7 @@
             completion(nil, nil);
         }
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
         if (completion) {
             [category.tweets addObject:tweetToRemove];
             completion(nil, error);

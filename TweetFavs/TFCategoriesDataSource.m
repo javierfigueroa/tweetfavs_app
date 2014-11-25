@@ -66,7 +66,7 @@
     }else{
         TFCategoryCell *cell = [tableView dequeueReusableCellWithIdentifier:CellID];
         cell.textLabel.text = category.name;
-        cell.detailTextLabel.text = [category.ID intValue] == -1 ? NSLocalizedString(@"All of your favorite tweets", nil) : [NSString stringWithFormat:@"%i tweets", category.tweets.count];
+        cell.detailTextLabel.text = [category.ID intValue] == -1 ? NSLocalizedString(@"All of your favorite tweets", nil) : [NSString stringWithFormat:@"%lu tweets", (unsigned long)category.tweets.count];
         
         if (self.tweet) {
             cell.accessoryType = [TFTweetsAdapter findTweetById:self.tweet.tweetID inCategory:category] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;

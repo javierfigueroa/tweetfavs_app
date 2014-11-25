@@ -7,7 +7,6 @@
 //
 
 #import "TFMenuViewController.h"
-#import "MLSocialNetworksManager.h"
 #import "TFCategories.h"
 #import "TFCategory.h"
 #import "TFTweetsAdapter.h"
@@ -21,6 +20,7 @@
 #import "TFCategoriesDataSource.h"
 #import "JSFlatButton.h"
 #import "IIViewDeckController.h"
+#import "TFTwitterManager.h"
 #define trimString( object ) [object stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet] ]
 
 
@@ -53,7 +53,7 @@
     [self.tableView registerNib:[UINib nibWithNibName:@"TFCategoryCell" bundle:nil] forCellReuseIdentifier:@"TFCategoryCell"];
     [self.tableView registerNib:[UINib nibWithNibName:@"TFEditCategoryCell" bundle:nil] forCellReuseIdentifier:@"TFEditCategoryCell"];
     
-    MLSocialNetworksManager *manager = [MLSocialNetworksManager sharedManager];
+    TFTwitterManager *manager = [TFTwitterManager sharedManager];
     self.accountLabel.text = manager.twitterAccount.username;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadCategories) name:TFCategoriesFetched object:nil];
@@ -90,7 +90,7 @@
         
         [self toggleEditMode];
     }else{
-        MLSocialNetworksManager *manager = [MLSocialNetworksManager sharedManager];
+        TFTwitterManager *manager = [TFTwitterManager sharedManager];
         [manager getTwitterAccounts:^(NSObject *response, NSError *error) {
             if (error) {
                 if (error.code != 600) {

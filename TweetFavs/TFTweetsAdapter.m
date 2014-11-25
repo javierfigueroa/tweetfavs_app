@@ -7,13 +7,13 @@
 //
 
 #import "TFTweetsAdapter.h"
-#import "MLSocialNetworksManager.h"
 #import "TFCategories.h"
 #import "TFFeedDataSource.h"
 #import "TFAppDelegate.h"
 #import "TFViewController.h"
 #import "TFTweet.h"
 #import "TFCategory.h"
+#import "TFTwitterManager.h"
 
 @implementation TFTweetsAdapter
 
@@ -39,7 +39,7 @@
 
 + (void)getCategories
 {
-    ACAccount *twitterAccount = [[MLSocialNetworksManager sharedManager] twitterAccount];
+    ACAccount *twitterAccount = [[TFTwitterManager sharedManager] twitterAccount];
     NSString *twitterId = [twitterAccount valueForKeyPath:@"properties.user_id"];
     
     NSMutableDictionary *categories = [[TFCategories sharedCategories] categories];
@@ -73,7 +73,7 @@
     TFCategory *category = categories[allKey];
     
     if (category.tweets.count == 0 || sinceID || maxID) {
-        MLSocialNetworksManager *manager = [MLSocialNetworksManager sharedManager];
+        TFTwitterManager *manager = [TFTwitterManager sharedManager];
         [manager getFavoriteTweetsSinceID:sinceID andMaxID:maxID completion:^(NSArray *tweets, NSError *error) {
             
             //Error case when twitter fails
@@ -178,7 +178,7 @@
 
 + (void)getTweetByID:(NSNumber *)tweetID completion:(void (^)(NSMutableDictionary *tweet))completion
 {
-    MLSocialNetworksManager *manager = [MLSocialNetworksManager sharedManager];
+    TFTwitterManager *manager = [TFTwitterManager sharedManager];
     [manager getTweetById:tweetID completion:^(NSDictionary *tweet, NSError *error) {
         completion([NSMutableDictionary dictionaryWithDictionary:tweet]);
     }];

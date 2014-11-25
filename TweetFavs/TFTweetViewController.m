@@ -35,7 +35,7 @@
     self.statusLabel.text = self.tweet.status;
     self.timeLabel.text = [NSString stringWithFormat:@"%@ ago", [self.tweet.created humanIntervalSinceNow]];
     self.retweetsLabel.text = [NSString stringWithFormat:@"%@ retweets", self.tweet.retweetCount];
-    self.categoriesLabel.text = [NSString stringWithFormat:@"%i categories", [self.tweet.categories count]];
+    self.categoriesLabel.text = [NSString stringWithFormat:@"%lu categories", (unsigned long)[self.tweet.categories count]];
     [self.avatarView setImageWithURL:self.tweet.avatarURL];
 }
 

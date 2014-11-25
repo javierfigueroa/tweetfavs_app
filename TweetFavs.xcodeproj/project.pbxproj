@@ -19,8 +19,6 @@
 		3BAD9CC01772B2B200F6FFCA /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BAD9CBF1772B2B200F6FFCA /* Default-568h@2x.png */; };
 		3BAD9CC31772B2B200F6FFCA /* TFViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD9CC21772B2B200F6FFCA /* TFViewController.m */; };
 		3BAD9CC61772B2B200F6FFCA /* TFViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BAD9CC41772B2B200F6FFCA /* TFViewController.xib */; };
-		3BAD9CCD1772B32D00F6FFCA /* libMainloop.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BAD9CCC1772B32D00F6FFCA /* libMainloop.a */; };
-		3BAD9CCF1772B5DB00F6FFCA /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BAD9CCE1772B5DB00F6FFCA /* FacebookSDK.framework */; };
 		3BAD9CD11772B64400F6FFCA /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BAD9CD01772B64300F6FFCA /* Accounts.framework */; };
 		3BAD9CD31772B65800F6FFCA /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BAD9CD21772B65800F6FFCA /* libsqlite3.dylib */; };
 		3BAD9CD51772B66900F6FFCA /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BAD9CD41772B66900F6FFCA /* Social.framework */; };
@@ -72,9 +70,14 @@
 		3BE38945177A48600051FF39 /* TFRefreshFooterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BE38944177A48600051FF39 /* TFRefreshFooterView.xib */; };
 		3BE38949177B37D70051FF39 /* TFRefreshHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BE38948177B37D70051FF39 /* TFRefreshHeaderView.m */; };
 		3BE3894B177B37FA0051FF39 /* TFRefreshHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BE3894A177B37FA0051FF39 /* TFRefreshHeaderView.xib */; };
+		C636EFD61A25357E00EE1B47 /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C636EFD51A25357E00EE1B47 /* Twitter.framework */; };
+		C636EFD81A2538C200EE1B47 /* TFTwitterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C636EFD71A2538C200EE1B47 /* TFTwitterManager.m */; };
+		C636EFE11A253DA300EE1B47 /* NSDate+HumanInterval.m in Sources */ = {isa = PBXBuildFile; fileRef = C636EFE01A253DA300EE1B47 /* NSDate+HumanInterval.m */; };
+		F881D3537A5BD00BCFDB6905 /* libPods-TweetFavs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C16E7B9DE9A9BE82E0B06504 /* libPods-TweetFavs.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2D26A07BA50E17914DC3E193 /* Pods-TweetFavs.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TweetFavs.release.xcconfig"; path = "Pods/Target Support Files/Pods-TweetFavs/Pods-TweetFavs.release.xcconfig"; sourceTree = "<group>"; };
 		3B77CCD4177CCC4100379106 /* sad-512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sad-512.png"; sourceTree = "<group>"; };
 		3BAD9CA61772B2B200F6FFCA /* TweetFavs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TweetFavs.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BAD9CA91772B2B200F6FFCA /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -169,6 +172,13 @@
 		3BE38947177B37D70051FF39 /* TFRefreshHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFRefreshHeaderView.h; sourceTree = "<group>"; };
 		3BE38948177B37D70051FF39 /* TFRefreshHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFRefreshHeaderView.m; sourceTree = "<group>"; };
 		3BE3894A177B37FA0051FF39 /* TFRefreshHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TFRefreshHeaderView.xib; sourceTree = "<group>"; };
+		4908198BA2F66F4F3D34D1B5 /* Pods-TweetFavs.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TweetFavs.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TweetFavs/Pods-TweetFavs.debug.xcconfig"; sourceTree = "<group>"; };
+		C16E7B9DE9A9BE82E0B06504 /* libPods-TweetFavs.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TweetFavs.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C636EFD51A25357E00EE1B47 /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
+		C636EFD71A2538C200EE1B47 /* TFTwitterManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFTwitterManager.m; sourceTree = "<group>"; };
+		C636EFD91A2538E400EE1B47 /* TFTwitterManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFTwitterManager.h; sourceTree = "<group>"; };
+		C636EFDF1A253DA300EE1B47 /* NSDate+HumanInterval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+HumanInterval.h"; sourceTree = "<group>"; };
+		C636EFE01A253DA300EE1B47 /* NSDate+HumanInterval.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+HumanInterval.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,6 +186,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C636EFD61A25357E00EE1B47 /* Twitter.framework in Frameworks */,
 				3BAD9CF21773433B00F6FFCA /* MobileCoreServices.framework in Frameworks */,
 				3BAD9CF01773431F00F6FFCA /* SystemConfiguration.framework in Frameworks */,
 				3BAD9CEE177342FD00F6FFCA /* CoreData.framework in Frameworks */,
@@ -189,10 +200,9 @@
 				3BAD9CD51772B66900F6FFCA /* Social.framework in Frameworks */,
 				3BAD9CD31772B65800F6FFCA /* libsqlite3.dylib in Frameworks */,
 				3BAD9CD11772B64400F6FFCA /* Accounts.framework in Frameworks */,
-				3BAD9CCF1772B5DB00F6FFCA /* FacebookSDK.framework in Frameworks */,
-				3BAD9CCD1772B32D00F6FFCA /* libMainloop.a in Frameworks */,
 				3BAD9CAA1772B2B200F6FFCA /* UIKit.framework in Frameworks */,
 				3BAD9CAC1772B2B200F6FFCA /* Foundation.framework in Frameworks */,
+				F881D3537A5BD00BCFDB6905 /* libPods-TweetFavs.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,6 +215,7 @@
 				3BAD9CAF1772B2B200F6FFCA /* TweetFavs */,
 				3BAD9CA81772B2B200F6FFCA /* Frameworks */,
 				3BAD9CA71772B2B200F6FFCA /* Products */,
+				AE26384D14D749133CFB5993 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -219,6 +230,7 @@
 		3BAD9CA81772B2B200F6FFCA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C636EFD51A25357E00EE1B47 /* Twitter.framework */,
 				3BAD9CF11773433B00F6FFCA /* MobileCoreServices.framework */,
 				3BAD9CEF1773431F00F6FFCA /* SystemConfiguration.framework */,
 				3BAD9CED177342FD00F6FFCA /* CoreData.framework */,
@@ -238,6 +250,7 @@
 				3BAD9CA91772B2B200F6FFCA /* UIKit.framework */,
 				3BAD9CAB1772B2B200F6FFCA /* Foundation.framework */,
 				3BAD9CAD1772B2B200F6FFCA /* CoreGraphics.framework */,
+				C16E7B9DE9A9BE82E0B06504 /* libPods-TweetFavs.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -269,6 +282,8 @@
 				3BE3890A1778A7250051FF39 /* TFTweetViewController.xib */,
 				3BE3890D1778C4D20051FF39 /* TFTheme.h */,
 				3BE3890E1778C4D20051FF39 /* TFTheme.m */,
+				C636EFD91A2538E400EE1B47 /* TFTwitterManager.h */,
+				C636EFD71A2538C200EE1B47 /* TFTwitterManager.m */,
 			);
 			path = TweetFavs;
 			sourceTree = "<group>";
@@ -306,6 +321,7 @@
 		3BAD9CF31773473C00F6FFCA /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				C636EFDE1A253DA300EE1B47 /* NSDate+HumanInterval */,
 				3BE3893C177A47140051FF39 /* STableViewController */,
 				3BE389171779CDA40051FF39 /* JSFlatButton */,
 				3BAD9CF41773473C00F6FFCA /* ViewDeck */,
@@ -403,6 +419,24 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		AE26384D14D749133CFB5993 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4908198BA2F66F4F3D34D1B5 /* Pods-TweetFavs.debug.xcconfig */,
+				2D26A07BA50E17914DC3E193 /* Pods-TweetFavs.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		C636EFDE1A253DA300EE1B47 /* NSDate+HumanInterval */ = {
+			isa = PBXGroup;
+			children = (
+				C636EFDF1A253DA300EE1B47 /* NSDate+HumanInterval.h */,
+				C636EFE01A253DA300EE1B47 /* NSDate+HumanInterval.m */,
+			);
+			path = "NSDate+HumanInterval";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -410,9 +444,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3BAD9CC91772B2B200F6FFCA /* Build configuration list for PBXNativeTarget "TweetFavs" */;
 			buildPhases = (
+				B4F266D9D1FD56E64971B6C7 /* Check Pods Manifest.lock */,
 				3BAD9CA21772B2B200F6FFCA /* Sources */,
 				3BAD9CA31772B2B200F6FFCA /* Frameworks */,
 				3BAD9CA41772B2B200F6FFCA /* Resources */,
+				9016572D3660C24A68728516 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -483,12 +519,46 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		9016572D3660C24A68728516 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TweetFavs/Pods-TweetFavs-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B4F266D9D1FD56E64971B6C7 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		3BAD9CA21772B2B200F6FFCA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				3BAD9CB61772B2B200F6FFCA /* main.m in Sources */,
+				C636EFD81A2538C200EE1B47 /* TFTwitterManager.m in Sources */,
 				3BAD9CBA1772B2B200F6FFCA /* TFAppDelegate.m in Sources */,
 				3BAD9CC31772B2B200F6FFCA /* TFViewController.m in Sources */,
 				3BAD9CDF17733E7B00F6FFCA /* TFFeedCell.m in Sources */,
@@ -510,6 +580,7 @@
 				3BE3891E1779CDA40051FF39 /* JSFlatButton.m in Sources */,
 				3BE3891F1779CDA40051FF39 /* UIColor+JSFlatButton.m in Sources */,
 				3BE389201779CDA40051FF39 /* UIImage+JSFlatButton.m in Sources */,
+				C636EFE11A253DA300EE1B47 /* NSDate+HumanInterval.m in Sources */,
 				3BE3893F177A47150051FF39 /* STableViewController.m in Sources */,
 				3BE38943177A484E0051FF39 /* TFRefreshFooterView.m in Sources */,
 				3BE38949177B37D70051FF39 /* TFRefreshHeaderView.m in Sources */,
@@ -596,48 +667,38 @@
 		};
 		3BAD9CCA1772B2B200F6FFCA /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4908198BA2F66F4F3D34D1B5 /* Pods-TweetFavs.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../mainloop/Mainloop/Mainloop/Libraries\"",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TweetFavs/TweetFavs-Prefix.pch";
 				INFOPLIST_FILE = "TweetFavs/TweetFavs-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/SFXWorkspace-fzwsgwcggcqteshdrewhmyovjtsv/Build/Products/Debug-iphoneos\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../mainloop\"/**";
+				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
 		};
 		3BAD9CCB1772B2B200F6FFCA /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2D26A07BA50E17914DC3E193 /* Pods-TweetFavs.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../mainloop/Mainloop/Mainloop/Libraries\"",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TweetFavs/TweetFavs-Prefix.pch";
 				INFOPLIST_FILE = "TweetFavs/TweetFavs-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/SFXWorkspace-fzwsgwcggcqteshdrewhmyovjtsv/Build/Products/Debug-iphoneos\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../mainloop\"/**";
+				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
