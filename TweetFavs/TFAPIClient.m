@@ -33,6 +33,7 @@ static NSString * const kAPIBaseURLString =
         return nil;
     }
     
+    [self.requestSerializer setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
     
 //    [self setDefaultHeader:@"Content-Type" value:@"application/x-www-form-urlencoded; charset=utf-8"];
     
