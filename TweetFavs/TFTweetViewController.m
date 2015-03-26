@@ -13,6 +13,8 @@
 #import "TFTheme.h"
 #import "TFCategoriesDataSource.h"
 #import "TFCategories.h"
+#import "TFCategory.h"
+#import "TFTweetsAdapter.h"
 
 @interface TFTweetViewController ()
 
@@ -44,15 +46,22 @@
     [super viewDidLoad];
     [TFTheme customizeTweetController:self];
     [TFTheme setBackButton:self];
-    self.title = NSLocalizedString(@"Fav", nil);
+//    self.title = NSLocalizedString(@"Fav", nil);
     [self configureTweet];
     [self.categoriesTableView registerNib:[UINib nibWithNibName:@"TFCategoryCell" bundle:nil] forCellReuseIdentifier:@"TFCategoryCell"];
     self.tableDataSource = [[TFCategoriesDataSource alloc] init];
     self.tableDataSource.tweet = self.tweet;
     self.categoriesTableView.dataSource = self.tableDataSource;
-
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refresh) name:TFCategoriesEdited object:nil];
-}
+    
+//    [TFTweet getByTweetId:self.tweet.tweetID Completion:^(TFTweet *tweet, NSError *error) {
+//        self.tweet = tweet;
+        [TFTweetsAdapter getCategoriesByTweet:self.tweet completion:^(NSArray *categories) {
+           [self refresh];
+        }];
+//    }];
+ }
 
 - (void)didReceiveMemoryWarning
 {
@@ -71,25 +80,39 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     //skip the all category
-    if (indexPath.row > 0) {
-        TFCategory *category;
-        category = [self.tableDataSource getCategoryByIndexPath:indexPath];
-        
+//    if (indexPath.row > 0) {
+        TFCategory *category = [self.tableDataSource getCategoryByIndexPath:indexPath];
+
         UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
         
         if (cell.accessoryType == UITableViewCellAccessoryCheckmark){
-            [TFTweet deleteTweet:self.tweet fromCategory:category Completion:nil];
+            [TFTweet deleteTweet:self.tweet fromCategory:category completion:^(TFTweet *tweet, NSError *error) {
+                [category.tweets removeObject:self.tweet];
+                [self.tweet.categories enumerateObjectsUsingBlock:^(TFCategory *obj, NSUInteger idx, BOOL *stop) {
+                    if ([obj.ID isEqualToString:category.ID]) {
+                        [self.tweet.categories removeObject:obj];
+                        *stop = YES;
+                    }                    
+                }];
+                [self configureTweet];
+                [tableView reloadData];
+            }];
         }else{
-            [TFTweet addTweet:self.tweet toCategory:category Completion:nil];
+            [TFTweet addTweet:self.tweet toCategory:category completion:^(TFTweet *tweet, NSError *error) {
+                
+                [self configureTweet];
+                [cell setNeedsDisplay];
+                
+            }];
         }
         
         self.tweet.edited = YES;
-        [self configureTweet];
+//    [self.tableDataSource setCategory:category byIndexPath:indexPath];
         [[NSNotificationCenter defaultCenter] postNotificationName:TFCategoriesEdited object:nil];
         
 //        [self.categoriesTableView reloadRowsAtIndexPaths:@[indexPath]
 //                                        withRowAnimation:UITableViewRowAnimationFade];
-    }
+//    }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section

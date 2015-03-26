@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class TFFeedCell, TFTweetViewController, TFCategoryCell, TFMenuViewController, TFViewController;
+@class TFFeedCell, TFTweetViewController, TFCategoryCell, TFMenuViewController, TFViewController, TweetsController, CategoriesController;
 @interface TFTheme : NSObject
 
 + (UIColor*)mainColor;
@@ -22,9 +22,10 @@
 + (void)customizeCategoryCell:(TFCategoryCell*)cell;
 + (void)customizeTweetCell:(TFFeedCell*)cell;
 + (void)customizeTweetController:(TFTweetViewController*)controller;
-+ (void)customizeMenuController:(TFMenuViewController*)controller;
-+ (void)customizeFeedController:(TFViewController*)controller;
++ (void)customizeCategoriesController:(CategoriesController*)controller;
++ (void)customizeFeedController:(TweetsController*)controller;
 + (void)styleNavigationBar;
++ (void)styleTabBar:(UITabBar *)tabBar;
 
 + (void)setBackButton:(UIViewController*)controller;
 

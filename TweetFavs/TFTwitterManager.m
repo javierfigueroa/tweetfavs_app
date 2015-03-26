@@ -9,6 +9,9 @@
 #import "TFTwitterManager.h"
 #import <Twitter/Twitter.h>
 
+NSString *const TFGetAccounts = @"TFGetAccounts";
+NSString *const TFAccountSelected = @"TFAccountSelected";
+
 @implementation TFTwitterManager
 
 
@@ -31,7 +34,7 @@
     return self;
 }
 
-- (void) getTwitterAccounts:(void(^)(NSObject *response, NSError *error))completion
+- (void) getTwitterAccounts:(void(^)(NSArray *accounts, NSError *error))completion
 {
     ACAccountStore *accountStore = [[ACAccountStore alloc] init];
     ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
@@ -39,15 +42,9 @@
     [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error) {
         if(granted) {
             NSArray *accountsArray = [accountStore accountsWithAccountType:accountType];
-            
-            if ([accountsArray count] > 0) {
-                ACAccount *twitterAccount = [accountsArray objectAtIndex:0];
-                NSLog(@"%@",twitterAccount.username);
-                NSLog(@"%@",twitterAccount.accountType);
-                self.twitterAccount = twitterAccount;
-            }
-            
-            completion(self.twitterAccount, error);
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                completion(accountsArray, error);
+            });
         }
     }];
 }
@@ -82,9 +79,22 @@
 {
     assert(self.twitterAccount);
     
+    NSString *url = @"";
+    
+    if (maxID != nil && sinceID != nil) {
+        url = [NSString stringWithFormat:@"https://api.twitter.com/1.1/favorites/list.json?since_id=%@&max_id=%@", sinceID, maxID];
+    }else if (sinceID != nil) {
+        url = [NSString stringWithFormat:@"https://api.twitter.com/1.1/favorites/list.json?since_id=%@", sinceID];
+    }else if (maxID != nil) {
+        url = [NSString stringWithFormat:@"https://api.twitter.com/1.1/favorites/list.json?max_id=%@", maxID];
+    }else{
+        url = [NSString stringWithFormat:@"https://api.twitter.com/1.1/favorites/list.json"];
+    }
+    
+    
     SLRequest *getRequest  = [SLRequest requestForServiceType:SLServiceTypeTwitter
                                                 requestMethod:SLRequestMethodGET
-                                                          URL:[NSURL URLWithString:@"https://api.twitter.com/1.1/favorites/list.json"]
+                                                          URL:[NSURL URLWithString:url]
                                                    parameters:nil];
     
     

@@ -39,6 +39,12 @@
     return category;
 }
 
+- (void)setCategory:(TFCategory*)category byIndexPath:(NSIndexPath *)indexPath
+{
+    NSMutableDictionary *categories = [[TFCategories sharedCategories] categories];
+    NSNumber *key = self.sortedCategories[indexPath.row];
+    categories[key] = category;
+}
 
 #pragma mark - TableView Data Source
 
@@ -66,10 +72,15 @@
     }else{
         TFCategoryCell *cell = [tableView dequeueReusableCellWithIdentifier:CellID];
         cell.textLabel.text = category.name;
-        cell.detailTextLabel.text = [category.ID intValue] == -1 ? NSLocalizedString(@"All of your favorite tweets", nil) : [NSString stringWithFormat:@"%lu tweets", (unsigned long)category.tweets.count];
+        cell.detailTextLabel.text =[NSString stringWithFormat:@"%lu tweets", (unsigned long)category.tweets.count];
         
-        if (self.tweet) {
-            cell.accessoryType = [TFTweetsAdapter findTweetById:self.tweet.tweetID inCategory:category] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+        if (self.tweet){
+            cell.accessoryType = UITableViewCellAccessoryNone;
+            [self.tweet.categories enumerateObjectsUsingBlock:^(TFCategory *tweetCategory, NSUInteger idx, BOOL *stop) {
+                if ([category.ID isEqualToString:tweetCategory.ID]) {
+                    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+                }
+            }];
         }
         
         return cell;
@@ -79,7 +90,7 @@
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     //can edit every category except the 'all' category
-    return indexPath.row > 0;
+    return YES;
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath

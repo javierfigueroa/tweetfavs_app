@@ -22,15 +22,6 @@ NSString *const TFTweetsLoaded = @"TFTweetsLoaded";
         _categories = [[NSMutableDictionary alloc] init];
     }
     
-    NSNumber *allKey = [NSNumber numberWithInt:-1];
-    TFCategory *category = _categories[allKey];
-    if (!category) {
-        category = [[TFCategory alloc] init];
-        category.ID = allKey;
-        category.name = NSLocalizedString(@"All", nil);
-        _categories[allKey] = category;
-    }
-    
     return _categories;
 }
 

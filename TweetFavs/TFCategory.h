@@ -8,25 +8,28 @@
 
 #import <Foundation/Foundation.h>
 
+@class PFObject, TFTweet;
 @interface TFCategory : NSObject
 
-@property (nonatomic, strong) NSNumber *ID;
+@property (nonatomic, strong) NSString *ID;
 @property (nonatomic, assign) BOOL editing;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSNumber *userID;
 @property (nonatomic, strong) NSMutableArray *tweets;
+@property (nonatomic, strong) PFObject *parseCategory;
 
-- (id)initWithAttributes:(NSDictionary*)data;
+- (id)initWithParseObject:(PFObject*)parseObject;
 
 //CRUD
 
 + (void)addCategoryWithName:(NSString*)name completion:(void(^)(TFCategory *category, NSError *error))completion;
 
++ (void)getCategoriesByTwitterId:(NSString*)twitterId completion:(void(^)(NSArray *categories, NSError *error))completion;
+
++ (void)getCategoriesByTweet:(TFTweet*)tweet completion:(void(^)(NSArray *categories, NSError *error))completion;
+
 + (void)updateCategory:(TFCategory*)category completion:(void(^)(TFCategory *category, NSError *error))completion;
 
-+ (void)getCategoriesById:(NSString*)userId andCompletion:(void(^)(NSArray *categories, NSError *error))completion;
-
-+ (void)getCategoriesByTweetId:(NSNumber*)tweetID andCompletion:(void(^)(NSArray *categories, NSError *error))completion;
-
 + (void)deleteCategory:(TFCategory*)category completion:(void(^)(NSArray *categories, NSError *error))completion;
+
 @end

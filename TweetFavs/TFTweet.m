@@ -14,6 +14,8 @@
 
 @implementation TFTweet
 
+#define DATE_FORMAT @"eee MMM dd HH:mm:ss ZZZZ yyyy"
+
 - (NSMutableArray *)categories
 {
     if (!_categories) {
@@ -23,137 +25,181 @@
     return _categories;
 }
 
-- (id)initWithAttributes:(NSDictionary*)data
+
+- (id)initWithAttributes:(id)tweet
 {
     self = [super init];
     if (self) {
-        [self updateWithAttributes:data];
-        self.edited = YES;
+        self.categoryID = tweet[@"categoryId"];
+        self.tweetID = tweet[@"tweetId"] ?
+        [NSNumber numberWithLongLong:[tweet[@"tweetId"] longLongValue]] :
+        [NSNumber numberWithLongLong:[tweet[@"id"] longLongValue]];
+        
+        self.username = tweet[@"username"] && tweet[@"username"] != (id)[NSNull null] ? tweet[@"username"] : tweet[@"user"][@"name"];
+        self.status = tweet[@"text"] ? tweet[@"text"] : tweet[@"status"];
+        
+//        if (tweet[@"created_at"] != (id)[NSNull null]) {
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            formatter.dateFormat = DATE_FORMAT;
+            self.created = [formatter dateFromString:tweet[@"created_at"] ? tweet[@"created_at"] : tweet[@"tweetCreatedAt"]];
+//        }
+        
+        self.retweetCount = tweet[@"retweets"] && tweet[@"retweets"] != (id)[NSNull null]?
+        [NSNumber numberWithInt:[tweet[@"retweets"] intValue]] :
+        [NSNumber numberWithInt:[tweet[@"retweet_count"] intValue]];
+        self.avatarURL = [NSURL URLWithString:(tweet[@"avatarUrl"] && tweet[@"avatarUrl"] != (id)[NSNull null] ? tweet[@"avatarUrl"] :tweet[@"user"][@"profile_image_url"])];
     }
+    return self;
+
+}
+
+- (id)initWithParseObject:(PFObject*)tweet
+{
+    self = [self initWithAttributes:tweet];
+    self.parseObject = tweet;
+    self.ID = tweet.objectId;
+    
     return self;
 }
 
-- (void)updateWithAttributes:(NSDictionary*)data
+- (void)addCategory:(TFCategory*)category completion:(void (^)(TFTweet *tweet, NSError *error))completion;
 {
-    
-    NSDictionary *tweet = data[@"tweet"] ? data[@"tweet"] : data;
-    
-    if (tweet[@"tweet_id"]) {
-        self.ID = tweet[@"id"];
-    }
-    
-    self.categoryID = tweet[@"category_id"];
-    
-    self.tweetID = tweet[@"tweet_id"] ?
-    [NSNumber numberWithLongLong:[tweet[@"tweet_id"] longLongValue]] :
-    [NSNumber numberWithLongLong:[tweet[@"id"] longLongValue]];
-    
-    self.username = tweet[@"username"] && tweet[@"username"] != (id)[NSNull null] ? tweet[@"username"] : tweet[@"user"][@"name"];
-    self.status = tweet[@"text"] ? tweet[@"text"] : tweet[@"status"];
-    
-    if (tweet[@"created_at"] != (id)[NSNull null]) {
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        formatter.dateFormat = @"eee MMM dd HH:mm:ss ZZZZ yyyy";
-        self.created = [formatter dateFromString:tweet[@"created_at"]];
-        
-        if (!self.created) {
-            formatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss'Z'";
-            self.created = [formatter dateFromString:tweet[@"created_at"]];
-        }
-    }
-    
-    self.retweetCount = tweet[@"retweets"] && tweet[@"retweets"] != (id)[NSNull null]?
-    [NSNumber numberWithInt:[tweet[@"retweets"] intValue]] :
-    [NSNumber numberWithInt:[tweet[@"retweet_count"] intValue]];
-    self.avatarURL = [NSURL URLWithString:(tweet[@"avatarUrl"] && tweet[@"avatarUrl"] != (id)[NSNull null] ? tweet[@"avatarUrl"] :tweet[@"user"][@"profile_image_url"])];
-    
-    NSArray *categories = data[@"categories"];
-    [categories enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        TFCategory *category = [[TFCategory alloc] initWithAttributes:obj];
-        [self.categories addObject:category];
-    }];
-}
-
-+ (void)getTweetsByCategoryId:(NSNumber*)categoryId andCompletion:(void(^)(NSArray *tweets, NSError *error))completion
-{
-    ACAccount *twitterAccount = [[TFTwitterManager sharedManager] twitterAccount];
-    NSString *twitterId = [twitterAccount valueForKeyPath:@"properties.user_id"];
-    NSString *url = [NSString stringWithFormat:@"tweets/%@/%@.json", twitterId, categoryId];
-    
-    [[TFAPIClient sharedClient] GET:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-        NSArray *JSON = (NSArray*)responseObject;
-#if DEBUG
-        NSLog(@"%@", JSON);
-#endif
-        NSMutableArray *tweets = [[NSMutableArray alloc] initWithCapacity:JSON.count];
-        [JSON enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            TFTweet *tweet = [[TFTweet alloc] initWithAttributes:obj];
-            [tweets addObject:tweet];
-        }];
-        
-        if (completion) {
-            completion(tweets, nil);
-        }
-        
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        if (completion) {
-            completion(nil, error);
+    PFRelation *relation = [self.parseObject relationForKey:@"categories"];
+    [relation addObject:category.parseCategory];
+    [self.parseObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            // The object has been saved.
+            if (completion) {
+                completion(nil, nil);
+            }
+        } else {
+            // There was a problem, check error.description
+            [category.tweets removeObject:self];
+            [self.categories removeObject:category];
+            if (completion) {
+                completion(nil, error);
+            }
         }
     }];
 }
 
-+ (void)addTweet:(TFTweet*)tweet toCategory:(TFCategory*)category Completion:(void(^)(NSArray *tweets, NSError *error))completion
+//POST
+
++ (void)addTweet:(TFTweet*)tweet toCategory:(TFCategory*)category completion:(void(^)(TFTweet *tweet, NSError *error))completion
 {
     ACAccount *twitterAccount = [[TFTwitterManager sharedManager] twitterAccount];
     NSString *twitterId = [twitterAccount valueForKeyPath:@"properties.user_id"];
-    
-    NSDictionary *parameters = @{@"twitter_id":twitterId, @"category_id":category.ID, @"tweet_id":tweet.tweetID, @"status": tweet.status, @"created_at":tweet.created, @"retweets":tweet.retweetCount, @"avatarUrl":tweet.avatarURL.absoluteString, @"username":tweet.username};
     
     [category.tweets addObject:tweet];
+    [tweet.categories addObject:category];
     
-    [[TFAPIClient sharedClient] POST:@"tweets.json" parameters:parameters success:^(NSURLSessionDataTask *task, id responseObject) {
-        NSArray *JSON = (NSArray*)responseObject;
-#if DEBUG
-        NSLog(@"%@", JSON);
-#endif
-        
-        if (completion) {
-            completion(nil, nil);
+    PFQuery *query = [PFQuery queryWithClassName:@"Tweet"];
+    [query whereKey:@"tweetId" equalTo:tweet.tweetID];
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        if (!object) {
+            NSLog(@"The getFirstObject request failed.");NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            formatter.dateFormat = DATE_FORMAT;
+            
+            PFObject *parseTweet = [PFObject objectWithClassName:@"Tweet" dictionary:@{@"twitterId":twitterId,
+                                                                                       @"tweetCreatedAt": [formatter stringFromDate:tweet.created],
+                                                                                       @"tweetId":tweet.tweetID,
+                                                                                       @"status": tweet.status,
+                                                                                       @"retweets":tweet.retweetCount,
+                                                                                       @"avatarUrl":tweet.avatarURL.absoluteString,
+                                                                                       @"username":tweet.username}];
+            [parseTweet saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                if (succeeded) {
+                    tweet.parseObject = parseTweet;
+                    tweet.ID = parseTweet.objectId;
+                    [tweet addCategory:category completion:completion];
+                }else{
+                    [category.tweets removeObject:tweet];
+                    [tweet.categories removeObject:category];
+                    if (completion) {
+                        completion(nil, error);
+                    }
+                }
+            }];
+        } else {
+            // The find succeeded.
+            NSLog(@"Successfully retrieved the object.");
+            tweet.parseObject = object;
+            tweet.ID = object.objectId;
+            [tweet addCategory:category completion:completion];
+        }
+    }];
+}
+
+//GET
+
++ (void)getByTweetId:(NSNumber *)tweetId completion:(void (^)(TFTweet *tweet, NSError *error))completion
+{
+    PFQuery *query = [PFQuery queryWithClassName:@"Tweet"];
+    [query whereKey:@"tweetId" equalTo:tweetId];
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        if (!error) {
+            TFTweet *tweet = [[TFTweet alloc] initWithParseObject:object];
+            if (completion) {
+                completion(tweet, nil);
+            }
+            
+        } else {
+            // Log details of the failure
+            NSLog(@"Error: %@ %@", error, [error userInfo]);
+            if (completion) {
+                completion(nil, error);
+            }
         }
         
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        if (completion) {
-            [category.tweets removeObject:tweet];
+    }];
+}
+
++ (void)getByCategory:(TFCategory *)category completion:(void (^)(NSArray *tweets, NSError *error))completion
+{
+    PFQuery *query = [PFQuery queryWithClassName:@"Tweet"];
+    [query whereKey:@"categories" equalTo:category.parseCategory];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (error == nil) {
+            NSMutableArray *tweets = [[NSMutableArray alloc] initWithCapacity:objects.count];
+            [objects enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                [tweets addObject:[[TFTweet alloc] initWithParseObject:obj]];
+            }];
+            completion(tweets, nil);
+        }else{
             completion(nil, error);
         }
     }];
 }
 
-+ (void)deleteTweet:(TFTweet*)tweet fromCategory:(TFCategory*)category Completion:(void(^)(NSArray *tweets, NSError *error))completion
+//DELETE
+
++ (void)deleteTweet:(TFTweet*)tweet fromCategory:(TFCategory*)category completion:(void(^)(TFTweet *tweet, NSError *error))completion
 {
-    ACAccount *twitterAccount = [[TFTwitterManager sharedManager] twitterAccount];
-    NSString *twitterId = [twitterAccount valueForKeyPath:@"properties.user_id"];
-    
-    TFTweet *tweetToRemove = [TFTweetsAdapter findTweetById:tweet.tweetID inCategory:category];
-    [category.tweets removeObject:tweetToRemove];
-    [category.tweets removeObject:tweet];
-    
-    NSString *url = [NSString stringWithFormat:@"tweets/%@/%@/%@.json", twitterId, category.ID, tweet.tweetID];
-    
-    [[TFAPIClient sharedClient] DELETE:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-//        NSArray *JSON = (NSArray*)[NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:nil];
-//#if DEBUG
-//        NSLog(@"%@", JSON);
-//#endif
-        
-        if (completion) {
-            completion(nil, nil);
-        }
-        
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        if (completion) {
-            [category.tweets addObject:tweetToRemove];
-            completion(nil, error);
+    PFQuery *query = [PFQuery queryWithClassName:@"Tweet"];
+    [query whereKey:@"tweetId" equalTo:tweet.tweetID];
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        if (!object) {
+            NSLog(@"The getFirstObject request failed.");
+        } else {
+            // The find succeeded.
+            NSLog(@"Successfully retrieved the object.");
+            tweet.parseObject = object;
+            tweet.ID = object.objectId;
+            
+            PFRelation *relation = [tweet.parseObject relationForKey:@"categories"];
+            [relation removeObject:category.parseCategory];
+            [tweet.parseObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                if (succeeded) {
+                    if (completion) {
+                        completion(nil, nil);
+                    }
+                }else{
+                    if (completion) {
+                        [category.tweets addObject:tweet];
+                        completion(nil, error);
+                    }
+                }
+            }];
         }
     }];
 }

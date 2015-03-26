@@ -10,31 +10,21 @@
 #import "TFCategories.h"
 #import "TFFeedDataSource.h"
 #import "TFAppDelegate.h"
-#import "TFViewController.h"
 #import "TFTweet.h"
 #import "TFCategory.h"
 #import "TFTwitterManager.h"
 
+static NSMutableArray *_favorites;
+
 @implementation TFTweetsAdapter
 
-+ (UITableView*)tableView
++ (NSMutableArray *)favorites
 {
-    TFAppDelegate *appDelegate = (TFAppDelegate*)[UIApplication sharedApplication].delegate;
-    TFViewController *feedController = appDelegate.viewController;
-    return feedController.tableView;
-}
-
-+ (TFFeedDataSource*)dataSource
-{
-    TFAppDelegate *appDelegate = (TFAppDelegate*)[UIApplication sharedApplication].delegate;
-    TFViewController *feedController = appDelegate.viewController;
-    return feedController.tableViewDataSource;
-}
-
-+ (void)reloadDataSource
-{
-    [[[self class] tableView] reloadData];
-    [[NSNotificationCenter defaultCenter] postNotificationName:TFTweetsLoaded object:nil];
+    if (_favorites == nil) {
+        _favorites = [[NSMutableArray alloc] init];
+    }
+    
+    return _favorites;
 }
 
 + (void)getCategories
@@ -43,36 +33,28 @@
     NSString *twitterId = [twitterAccount valueForKeyPath:@"properties.user_id"];
     
     NSMutableDictionary *categories = [[TFCategories sharedCategories] categories];
-    [TFCategory getCategoriesById:twitterId andCompletion:^(NSArray *rcategories, NSError *error) {
+    [TFCategory getCategoriesByTwitterId:twitterId completion:^(NSArray *cats, NSError *error) {
         [categories removeAllObjects];
         if (!error) {
-            [rcategories enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            [cats enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
                 TFCategory *category = (TFCategory*)obj;
                 categories[category.ID] = category;
             }];
-            
-            TFCategory *all = [[TFCategory alloc] init];
-            all.name = NSLocalizedString(@"All", nil);
-            all.ID = [NSNumber numberWithInt:-1];
-            categories[all.ID] = all;
         }
         
         [[NSNotificationCenter defaultCenter] postNotificationName:TFCategoriesFetched object:nil];
     }];
 }
 
-+ (void)getFavoriteTweets
++ (void)getFavoriteTweetsWithCompletion:(void(^)(NSArray *tweets))completion
 {
-    [[self class] getFavoriteTweetsSinceID:nil andMaxID:nil completion:nil];
+    [[self class] getFavoriteTweetsSinceID:nil andMaxID:nil completion:completion];
 }
 
 + (void)getFavoriteTweetsSinceID:(NSNumber*)sinceID andMaxID:(NSNumber*)maxID completion:(void(^)(NSArray *tweets))completion
 {
-    NSMutableDictionary *categories = [[TFCategories sharedCategories] categories];
-    NSNumber *allKey = [NSNumber numberWithInt:-1];
-    TFCategory *category = categories[allKey];
     
-    if (category.tweets.count == 0 || sinceID || maxID) {
+//    if ([TFTweetsAdapter favorites].count == 0 || sinceID || maxID) {
         TFTwitterManager *manager = [TFTwitterManager sharedManager];
         [manager getFavoriteTweetsSinceID:sinceID andMaxID:maxID completion:^(NSArray *tweets, NSError *error) {
             
@@ -82,99 +64,51 @@
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Twitter Error", nil) message:response[@"errors"][0][@"message"] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                 [alert show];
                 
-                [[self class] dataSource].tweets = category.tweets;
-                [[self class] reloadDataSource];
-                
                 if (completion) {
                     completion(@[]);
                 }
             }else{
                 //usually the first time we get tweets
                 if (!sinceID && !maxID) {
-                    [[[self class] dataSource].tweets removeAllObjects];
-                    [category.tweets removeAllObjects];
+                    [[TFTweetsAdapter favorites] removeAllObjects];
                 }
                 
                 //append to the top of the list since these are new tweets
                 if (sinceID) {
                     [tweets enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
                         TFTweet *tweet = [[TFTweet alloc] initWithAttributes:obj];
-                        [category.tweets insertObject:tweet atIndex:0];
+                        [[TFTweetsAdapter favorites] insertObject:tweet atIndex:0];
                     }];
                 }else{
                 //append to the end, when loading more tweets
                     if (!maxID || tweets.count > 1) {
                         [tweets enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
                             TFTweet *tweet = [[TFTweet alloc] initWithAttributes:obj];
-                            [category.tweets addObject:tweet];
+                            [[TFTweetsAdapter favorites] addObject:tweet];
                         }];   
                     }
                 }
                 
-                [[self class] dataSource].tweets = category.tweets;
-                [[self class] reloadDataSource];
-                
                 if (completion) {
-                    completion(tweets);
+                    completion([TFTweetsAdapter favorites]);
                 }
             }
         }];
-    }else{
-        [[self class] dataSource].tweets = category.tweets;
-        [[self class] reloadDataSource];
-        
-        if (completion) {
-            completion(category.tweets);
-        }
-    }
+//    }else{
+//        if (completion) {
+//            completion([TFTweetsAdapter favorites]);
+//        }
+//    }
 }
 
-+ (void)setTweets:(NSMutableArray *)tweets
++ (void)getCategoriesByTweet:(TFTweet *)tweet completion:(void(^)(NSArray *categories))completion
 {
-    [[self class] dataSource].tweets = tweets;
-    [[self class] reloadDataSource];
-}
-
-+ (void)getTweetsByCategoryID:(NSNumber *)categoryID completion:(void(^)(void))completion
-{
-    NSMutableDictionary *categories = [[TFCategories sharedCategories] categories];
-    TFCategory *category = categories[categoryID];
-    
-    [TFTweet getTweetsByCategoryId:categoryID andCompletion:^(NSArray *tweets, NSError *error) {
-        [category.tweets removeAllObjects];
-        [category.tweets addObjectsFromArray:tweets];
-        
-        [[self class] dataSource].tweets = category.tweets;
-        [[self class] reloadDataSource];
-        
-        if (completion) {
-            completion();
-        }
-    }];
-}
-
-+ (void)getCategoriesByTweetID:(NSNumber *)tweetID completion:(void(^)(NSArray *categories))completion
-{
-    
-    [TFCategory getCategoriesByTweetId:tweetID andCompletion:^(NSArray *categories, NSError *error) {        
+    [TFCategory getCategoriesByTweet:tweet completion:^(NSArray *categories, NSError *error) {
         if (!error && completion) {
             completion(categories);
         }
     }];
 }
-
-
-+ (TFTweet *)findTweetById:(NSNumber *)ID inCategory:(TFCategory *)category
-{
-    for (TFTweet *tweet in category.tweets) {
-        if ([tweet.tweetID isEqualToNumber:ID]) {
-            return tweet;
-        }
-    }
-    
-    return nil;
-}
-
 
 + (void)getTweetByID:(NSNumber *)tweetID completion:(void (^)(NSMutableDictionary *tweet))completion
 {

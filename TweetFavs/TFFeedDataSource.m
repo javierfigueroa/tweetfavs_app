@@ -70,7 +70,7 @@
     cell.updateLabel.text = tweet.status;
     cell.dateLabel.text = [NSString stringWithFormat:@"%@ ago", [tweet.created humanIntervalSinceNow]];
     cell.likeCountLabel.text = [NSString stringWithFormat:@"%@ retweets", tweet.retweetCount];
-    cell.commentCountLabel.text = [NSString stringWithFormat:@"%i categories", [tweet.categories count]];
+    cell.commentCountLabel.text = [NSString stringWithFormat:@"%lu categories", (unsigned long)[tweet.categories count]];
     
     NSString *objID = [NSString stringWithFormat:@"%@", tweet.tweetID];
     UIImage *cellImage = [self.imageCache objectForKey:objID];
@@ -116,7 +116,6 @@
     if (tweet.status.length == 0) {
         dispatch_async(self.queue, ^{
             [TFTweetsAdapter getTweetByID:tweet.tweetID completion:^(NSMutableDictionary *atweet) {
-                [tweet updateWithAttributes:atweet];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self configureTweetCell:tweet cell:cell];
                 });
@@ -124,18 +123,6 @@
         });
     }
     
-    if (tweet.edited) {
-        dispatch_async(self.queue, ^{
-            [TFTweetsAdapter getCategoriesByTweetID:tweet.tweetID completion:^(NSArray *categories) {
-                tweet.categories = [NSMutableArray arrayWithArray:categories];
-                tweet.edited = NO;
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                [self configureTweetCell:tweet cell:cell];
-                    });
-            }];
-        });
-    }
     
     [self configureTweetCell:tweet cell:cell];
     

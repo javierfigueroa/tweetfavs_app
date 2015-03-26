@@ -48,3 +48,15 @@
 #define COCOAPODS_VERSION_MINOR_AFNetworking_UIKit 5
 #define COCOAPODS_VERSION_PATCH_AFNetworking_UIKit 0
 
+// STableViewController
+#define COCOAPODS_POD_AVAILABLE_STableViewController
+#define COCOAPODS_VERSION_MAJOR_STableViewController 0
+#define COCOAPODS_VERSION_MINOR_STableViewController 0
+#define COCOAPODS_VERSION_PATCH_STableViewController 1
+
+// TPKeyboardAvoiding
+#define COCOAPODS_POD_AVAILABLE_TPKeyboardAvoiding
+#define COCOAPODS_VERSION_MAJOR_TPKeyboardAvoiding 1
+#define COCOAPODS_VERSION_MINOR_TPKeyboardAvoiding 2
+#define COCOAPODS_VERSION_PATCH_TPKeyboardAvoiding 6
+

@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <AFNetworking/AFNetworking.h>
 
-@interface TFAPIClient : AFHTTPSessionManager
+@interface TFAPIClient : AFHTTPRequestOperationManager
 
 + (TFAPIClient *)sharedClient;
 

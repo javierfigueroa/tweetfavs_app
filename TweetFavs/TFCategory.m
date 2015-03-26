@@ -22,143 +22,150 @@
     return _tweets;
 }
 
-- (id)initWithAttributes:(NSDictionary*)data
+- (id)initWithParseObject:(PFObject*)parseObject
 {
     self = [super init];
     if (self) {
-        NSDictionary *category = data[@"category"] ? data[@"category"] : data;
-        self.userID = category[@"user_id"];
-        self.name = category[@"name"];
-        self.ID = category[@"id"];
-        
-        NSArray *tweets = data[@"tweets"];
-        [tweets enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            TFTweet *tweet = [[TFTweet alloc] initWithAttributes:obj];
-            [self.tweets addObject:tweet];
-        }];
+        self.userID = parseObject[@"twitterId"];
+        self.name = parseObject[@"name"];
+        self.ID = parseObject.objectId;
+        self.parseCategory = parseObject;
     }
     return self;
 }
+
+//POST
 
 + (void)addCategoryWithName:(NSString*)name completion:(void(^)(TFCategory *category, NSError *error))completion
 {
     ACAccount *twitterAccount = [[TFTwitterManager sharedManager] twitterAccount];
     NSString *userId = [twitterAccount valueForKeyPath:@"properties.user_id"];
     
-    NSDictionary *parameters = @{@"twitter_id":userId, @"name": name};
-    [[TFAPIClient sharedClient] POST:@"categories.json" parameters:parameters success:^(NSURLSessionDataTask *task, id responseObject) {
-        
-        NSDictionary *JSON = (NSDictionary*)responseObject;
-#if DEBUG
-        NSLog(@"%@", JSON);
-#endif
-        TFCategory *category = [[TFCategory alloc] initWithAttributes:JSON];
-        if (completion) {
-            completion(category, nil);
-        }
-        
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        if (completion) {
-            completion(nil, error);
+    NSDictionary *parameters = @{@"twitterId":userId,
+                                 @"name": name};
+    
+    PFObject *parseCategory = [PFObject objectWithClassName:@"Category" dictionary:parameters];
+    [parseCategory saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            // The object has been saved.
+            if (completion) {
+                TFCategory *category = [[TFCategory alloc] initWithParseObject:parseCategory];
+                if (completion) {
+                    completion(category, nil);
+                }
+            }
+        } else {
+            // There was a problem, check error.description
+            if (completion) {
+                completion(nil, error);
+            }
         }
     }];
 }
+
+//GET
+
++ (void)getCategoriesByTwitterId:(NSString *)twitterId completion:(void (^)(NSArray *, NSError *))completion
+{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:
+                              [NSString stringWithFormat:@"twitterId = '%@'", twitterId]];
+    
+    PFQuery *query = [PFQuery queryWithClassName:@"Category" predicate:predicate];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error) {
+            NSMutableArray *categories = [[NSMutableArray alloc] initWithCapacity:objects.count];
+            [objects enumerateObjectsUsingBlock:^(PFObject *obj, NSUInteger idx, BOOL *stop) {
+                TFCategory *category = [[TFCategory alloc] initWithParseObject:obj];
+                [categories addObject:category];
+            }];
+            
+            if (completion) {
+                completion(categories, nil);
+            }
+            
+            
+        } else {
+            // Log details of the failure
+            NSLog(@"Error: %@ %@", error, [error userInfo]);
+            if (completion) {
+                completion(nil, error);
+            }
+        }
+    }];
+}
+
++ (void)getCategoriesByTweet:(TFTweet*)tweet completion:(void (^)(NSArray *, NSError *))completion
+{
+    PFQuery *query = [PFQuery queryWithClassName:@"Tweet"];
+    [query whereKey:@"tweetId" equalTo:tweet.tweetID];
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        if (!object) {
+            NSLog(@"The getFirstObject request failed.");
+            NSLog(@"Error: %@ %@", error, [error userInfo]);
+        } else {
+            // The find succeeded.
+            NSLog(@"Successfully retrieved the object.");
+            
+            tweet.categoryID = object[@"categoryId"];
+            tweet.ID = object.objectId;
+            
+            PFRelation *relation = [object relationForKey:@"categories"];
+            [[relation query] findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+                if (error) {
+                    // There was an error
+                    // Log details of the failure
+                    NSLog(@"Error: %@ %@", error, [error userInfo]);
+                    if (completion) {
+                        completion(nil, error);
+                    }
+                } else {
+                    tweet.categories = [[NSMutableArray alloc] initWithCapacity:objects.count];
+                    [objects enumerateObjectsUsingBlock:^(PFObject *obj, NSUInteger idx, BOOL *stop) {
+                        TFCategory *category = [[TFCategory alloc] initWithParseObject:obj];
+                        [tweet.categories addObject:category];
+                    }];
+                    
+                    if (completion) {
+                        completion(tweet.categories, nil);
+                    }
+                }
+            }];
+        }
+    }];
+}
+
+//PUT
 
 + (void)updateCategory:(TFCategory*)category completion:(void(^)(TFCategory *category, NSError *error))completion
-
 {
-    ACAccount *twitterAccount = [[TFTwitterManager sharedManager] twitterAccount];
-    NSString *userId = [twitterAccount valueForKeyPath:@"properties.user_id"];
-    
-    NSDictionary *parameters = @{@"twitter_id":userId, @"name": category.name};
-    NSString *url = [NSString stringWithFormat:@"categories/%@.json", category.ID];
-    
-    [[TFAPIClient sharedClient] PUT:url parameters:parameters success:^(NSURLSessionDataTask *task, id responseObject) {
-        NSDictionary *JSON = (NSDictionary*)responseObject;
-#if DEBUG
-        NSLog(@"%@", JSON);
-#endif
-        TFCategory *category = [[TFCategory alloc] initWithAttributes:JSON];
-        if (completion) {
-            completion(category, nil);
+    category.parseCategory[@"name"] = category.name;
+    [category.parseCategory saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            if (completion) {
+                completion(category, nil);
+            }
+        }else{
+            if (completion) {
+                completion(nil, error);
+            }
         }
         
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        if (completion) {
-            completion(nil, error);
-        }
     }];
 }
 
-+ (void)getCategoriesById:(NSString*)userId andCompletion:(void(^)(NSArray *categories, NSError *error))completion
-{
-    NSString *url = [NSString stringWithFormat:@"categories/%@.json", userId];
-    [[TFAPIClient sharedClient] GET:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-        NSArray *JSON = (NSArray*)responseObject;
-#if DEBUG
-        NSLog(@"%@", JSON);
-#endif
-        NSMutableArray *categories = [[NSMutableArray alloc] initWithCapacity:JSON.count];
-        [JSON enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            TFCategory *category = [[TFCategory alloc] initWithAttributes:obj];
-            [categories addObject:category];
-        }];
-        
-        if (completion) {
-            completion(categories, nil);
-        }
-        
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        if (completion) {
-            completion(nil, error);
-        }
-    }];
-}
-
-+ (void)getCategoriesByTweetId:(NSNumber*)tweetID andCompletion:(void(^)(NSArray *categories, NSError *error))completion
-{
-    NSString *url = [NSString stringWithFormat:@"categories/by/tweet/%@.json", tweetID];
-    [[TFAPIClient sharedClient] GET:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-        NSArray *JSON = (NSArray*)responseObject;
-#if DEBUG
-        NSLog(@"%@", JSON);
-#endif
-        NSMutableArray *categories = [[NSMutableArray alloc] initWithCapacity:JSON.count];
-        [JSON enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            TFCategory *category = [[TFCategory alloc] initWithAttributes:obj];
-            [categories addObject:category];
-        }];
-        
-        if (completion) {
-            completion(categories, nil);
-        }
-        
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        if (completion) {
-            completion(nil, error);
-        }
-    }];
-}
+//DELETE
 
 + (void)deleteCategory:(TFCategory*)category completion:(void(^)(NSArray *categories, NSError *error))completion
-
 {
-    ACAccount *twitterAccount = [[TFTwitterManager sharedManager] twitterAccount];
-    NSString *userId = [twitterAccount valueForKeyPath:@"properties.user_id"];
-    
-    NSString *url = [NSString stringWithFormat:@"categories/%@/%@.json", userId, category.ID];
-    [[TFAPIClient sharedClient] DELETE:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-        NSDictionary *JSON = (NSDictionary*)responseObject;
-#if DEBUG
-        NSLog(@"%@", JSON);
-#endif
-        if (completion) {
-            completion(nil, nil);
-        }
-        
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        if (completion) {
-            completion(nil, error);
+    [category.parseCategory deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            if (completion) {
+                completion(nil, nil);
+            }
+        }else{
+            if (completion) {
+                completion(nil, error);
+            }
         }
     }];
 }

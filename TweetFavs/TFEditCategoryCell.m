@@ -9,6 +9,8 @@
 #import "TFEditCategoryCell.h"
 #import "TFCategory.h"
 #import "TFCategories.h"
+#import "TweetFavs-Swift.h"
+
 #define trimString( object ) [object stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet] ]
 
 @implementation TFEditCategoryCell
@@ -38,7 +40,9 @@
 #pragma mark - Text Field Delegate
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
-    [self.menuTableView setContentOffset:CGPointMake(0, self.frame.origin.y) animated:YES];
+//    TabController *tabBar = (TabController*) [UIApplication sharedApplication].keyWindow.rootViewController;
+//    UINavigationController *navBar = tabBar.selectedViewController.navigationController;
+//    [self.menuTableView setFrame:<#(CGRect)#>:CGPointMake(0, navBar.navigationBar.frame.size.height) animated:YES];
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField

@@ -29,13 +29,14 @@ static NSString * const kAPIBaseURLString =
 
 - (id)initWithBaseURL:(NSURL *)url {
     self = [super initWithBaseURL:url];
-    if (!self) {
-        return nil;
+    if (self) {
+        
+        self.requestSerializer = [AFHTTPRequestSerializer serializer];
+        self.responseSerializer = [AFJSONResponseSerializer serializer];
+        [self.requestSerializer setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+        [self.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+        [self.responseSerializer.acceptableContentTypes setByAddingObject:@"application/json"];
     }
-    
-    [self.requestSerializer setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    
-//    [self setDefaultHeader:@"Content-Type" value:@"application/x-www-form-urlencoded; charset=utf-8"];
     
     return self;
 }

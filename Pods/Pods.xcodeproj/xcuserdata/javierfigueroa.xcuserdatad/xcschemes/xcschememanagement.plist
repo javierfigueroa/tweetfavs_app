@@ -9,6 +9,16 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Pods-TweetFavs-STableViewController.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-TweetFavs-TPKeyboardAvoiding.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-TweetFavs.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -17,12 +27,22 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>851CC4463817F2A0460B2978</key>
+		<key>6EDEA80DE72AD452E7E9C7BA</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>DEC4A4B633FE395FEA343FFC</key>
+		<key>8B7CCD48A384CCA98B20901C</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>9C1962F22B68F39F649990AD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>9F1EC68E9464824D68F916EE</key>
 		<dict>
 			<key>primary</key>
 			<true/>

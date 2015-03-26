@@ -7,15 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "IIViewDeckController.h"
 
 @class TFViewController;
 
-@interface TFAppDelegate : UIResponder <UIApplicationDelegate, IIViewDeckControllerDelegate>
+@interface TFAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-
-@property (strong, nonatomic) IIViewDeckController *deckController;
-@property (strong, nonatomic) TFViewController *viewController;
 
 @end

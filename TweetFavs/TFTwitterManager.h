@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <Accounts/Accounts.h>
 
+extern NSString *const TFGetAccounts;
+extern NSString *const TFAccountSelected;
+
 @interface TFTwitterManager : NSObject
 
 @property (strong, nonatomic) ACAccount *twitterAccount;
@@ -16,7 +19,7 @@
 
 + (TFTwitterManager *) sharedManager;
 
-- (void) getTwitterAccounts:(void(^)(NSObject *response, NSError *error))completion;
+- (void) getTwitterAccounts:(void(^)(NSArray *accounts, NSError *error))completion;
 
 
 - (void) getTweetById:(NSNumber*)tweetID completion:(void(^)(NSDictionary *tweet, NSError *error))completion;

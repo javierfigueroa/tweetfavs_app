@@ -7,9 +7,8 @@
 //
 
 #import "TFAppDelegate.h"
-#import "TFMenuViewController.h"
-#import "TFViewController.h"
 #import "TFFeedDataSource.h"
+#import "TweetFavs-Swift.h"
 
 @implementation TFAppDelegate
 
@@ -17,23 +16,34 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
-    self.viewController  = [[TFViewController alloc] initWithNibName:@"TFViewController" bundle:nil];
-    TFFeedDataSource *datasource = [[TFFeedDataSource alloc] init];
-    self.viewController.tableViewDataSource = datasource;
+//    self.viewController  = [[TFViewController alloc] initWithNibName:@"TFViewController" bundle:nil];
+//    TFFeedDataSource *datasource = [[TFFeedDataSource alloc] init];
+//    self.viewController.tableViewDataSource = datasource;
+//    
+//    UINavigationController *tweetsControllers = [[UINavigationController alloc]
+//                                                 initWithRootViewController:self.viewController];
+//    
+//    TFMenuViewController *menu = [[TFMenuViewController alloc] initWithNibName:@"TFMenuViewController" bundle:nil];
+//    // Override point for customization after application launch.
+//    self.deckController =  [[IIViewDeckController alloc]
+//                                             initWithCenterViewController:tweetsControllers
+//                                             leftViewController:menu];
+//    
+//    [self.deckController setLeftSize:40];
+//    [self.deckController setBounceDurationFactor:0.8];
+//    
+//    self.window.rootViewController = self.deckController;
     
-    UINavigationController *tweetsControllers = [[UINavigationController alloc]
-                                                 initWithRootViewController:self.viewController];
+    [Parse enableLocalDatastore];
     
-    TFMenuViewController *menu = [[TFMenuViewController alloc] initWithNibName:@"TFMenuViewController" bundle:nil];
-    // Override point for customization after application launch.
-    self.deckController =  [[IIViewDeckController alloc]
-                                             initWithCenterViewController:tweetsControllers
-                                             leftViewController:menu];
+    // Initialize Parse.
+    [Parse setApplicationId:@"DjKpN1cXT3zA8LPVEIWWydukRNwERvomVbgT9DzC"
+                  clientKey:@"6y9FlsN6KhjzD8ULOf9OJbysqPSikh09s7dpH9PQ"];
     
-    [self.deckController setLeftSize:40];
-    [self.deckController setBounceDurationFactor:0.8];
+    // [Optional] Track statistics around application opens.
+    [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
-    self.window.rootViewController = self.deckController;
+    self.window.rootViewController = [[TabController alloc]init];
     [self.window makeKeyAndVisible];
     return YES;
 }

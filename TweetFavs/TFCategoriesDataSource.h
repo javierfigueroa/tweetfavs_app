@@ -16,4 +16,6 @@
 
 - (TFCategory *)getCategoryByIndexPath:(NSIndexPath *)indexPath;
 
+- (void)setCategory:(TFCategory*)category byIndexPath:(NSIndexPath *)indexPath;
+
 @end
